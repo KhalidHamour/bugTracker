@@ -1,4 +1,5 @@
 import Dialog from "@mui/material/Dialog";
+import AddBugDialog from "./AddBugDialog";
 import AddProjectDialog from "./AddProjectDialog";
 
 interface Iprops {
@@ -15,6 +16,9 @@ const AppDialog = (props: Iprops) => {
       open={props.open}
       onBackdropClick={props.onBackDropClick}
     >
+      {props.variant === "AddBug" && (
+        <AddBugDialog close={props.onClose} />
+      )}
       {props.variant === "AddProject" && (
         <AddProjectDialog close={props.onClose} />
       )}

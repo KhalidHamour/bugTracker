@@ -1,0 +1,60 @@
+/*overall Page*/
+.project-overview-container {
+  position: relative;
+  bottom: 0;
+  height: 92%;
+  width: 99%;
+}
+/*tabs/Navigation*/
+.nav-tabs-container {
+  height: min-content;
+  margin: 5px;
+  padding: 5px 0;
+}
+
+/*tab contents*/
+.tab-content-container {
+  position: relative;
+  bottom: 0;
+  display: flex;
+  height: 95%;
+  width: 100%;
+  align-content: flex-start;
+}
+
+/*table headings*/
+.table-headings-container {
+  position: relative;
+  height: min-content;
+  z-index: 10;
+  background-color: white;
+}
+.table-heading {
+  display: flex;
+  justify-content: center;
+}
+
+/*table columns*/
+.table-columns-container {
+  position: relative;
+  display: flex;
+  bottom: 0;
+  height: 90%;
+  width: 100%;
+  left: 20px;
+  flex-direction: column;
+  overflow-y: scroll;
+}
+
+.table-column-contents {
+  display: flex;
+  height: 90%;
+  width: 100%;
+  justify-content: flex-start;
+  align-content: flex-start;
+}
+
+.table-column {
+  max-width: 25%;
+  min-width: 25%;
+}
