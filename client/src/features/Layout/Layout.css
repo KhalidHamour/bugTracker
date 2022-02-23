@@ -1,0 +1,37 @@
+.app-container {
+  position: absolute;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+}
+
+.content-container {
+  position: relative;
+  bottom: 0;
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  overflow-y: hidden;
+  align-content: flex-start;
+}
+
+.heading {
+  position: relative;
+  top: 0;
+  margin: 0;
+  z-index: 10;
+  height: 8%;
+  background-color: #1f1f20;
+  align-items: center;
+  min-height: 70px;
+}
+
+.heading h4 {
+  position: absolute;
+  top: 1.2rem;
+  left: 1.5rem;
+  padding: 0;
+  margin: 0;
+  color: white;
+}

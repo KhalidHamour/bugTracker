@@ -1,0 +1,30 @@
+.project-tab {
+  background-color: #8e8e92;
+  border: 3px solid black;
+  width: 80%;
+  height: 100%;
+  margin: 0.5rem;
+  padding: 0.5rem;
+}
+
+.project-tabs-container {
+  margin-top: 0px;
+  margin-left: 0px;
+  height: 90%;
+
+  align-content: flex-start;
+  overflow-y: scroll;
+}
+
+.project-tab-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  height: min-content;
+  width: min-content;
+}
+
+.button-wrapper {
+  height: min-content;
+}
