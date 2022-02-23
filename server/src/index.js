@@ -8,6 +8,7 @@ import bugRoutes from "./routes/bugs.js";
 import userRoutes from "./routes/users.js";
 
 const PORT = process.env.PORT || 8000;
+
 const ENV = process.env.ENVIRONMENT;
 
 const app = express();
