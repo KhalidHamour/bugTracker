@@ -1,6 +1,28 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import bugServices from "../../api/bugServices";
 import projectServices from "../../api/projectServices";
+import teamServices from "../../api/teamServices";
+import { IProject } from "../../Interfaces";
+
+export type state = { value: IProject; status: string };
+
+export const initialState: state = {
+  value: {
+    _id: "",
+    name: "",
+    team: { _id: "", projectId: "", members: [], roles: [] },
+    issues: [],
+    __v: 0,
+  },
+  status: "",
+};
+
+export const setStatusLoading = (state: state) => {
+  state.status = "loading";
+};
+export const setStatusFailed = (state: state) => {
+  state.status = "falied";
+};
 
 export const setCurrentProject = createAsyncThunk(
   "projectsOverview/getFullProject",
@@ -9,7 +31,9 @@ export const setCurrentProject = createAsyncThunk(
       const response = await projectServices.fetchFullProject(id);
 
       return response.data;
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
 );
 
@@ -26,7 +50,22 @@ export const addProjectBug = createAsyncThunk(
       const response = await bugServices.create(data.bug, data.projectId);
 
       return response.data;
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+export const addTeamMember = createAsyncThunk(
+  "ProjectOverview/addTeamMember",
+  async (data: { email: string; id: string }, thunkAPI) => {
+    try {
+      const response = await teamServices.addProjectTeamMember(data);
+
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
   }
 );
 
@@ -48,6 +87,8 @@ export const updateProjectBug = createAsyncThunk(
       const response = await bugServices.update(data._id, data.bug);
 
       return response.data;
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
 );

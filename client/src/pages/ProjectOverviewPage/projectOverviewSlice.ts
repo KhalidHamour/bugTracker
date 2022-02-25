@@ -1,30 +1,24 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IBug, IProject } from "../../Interfaces";
+
 import {
-  addProjectBug,
+  state,
+  initialState,
+  setStatusLoading,
+  setStatusFailed,
   setCurrentProject,
+  addProjectBug,
   updateProjectBug,
+  addTeamMember,
 } from "./projectOverviewActions";
-
-type state = { value: IProject; status: string };
-
-const initialState: state = {
-  value: { _id: "", name: "", team: [], issues: [], __v: 0 },
-  status: "",
-};
 
 export const ProjectOverviewSlice = createSlice({
   name: "CurrentProject",
   initialState: initialState,
   reducers: {},
   extraReducers: (builder) => {
-    //fetch project details in terms of issues and team members;
-    builder.addCase(setCurrentProject.pending, (state: state) => {
-      state.status = "loading";
-    });
-    builder.addCase(setCurrentProject.rejected, (state: state) => {
-      state.status = "failed";
-    });
+    //fetch project details i.e. full issues and  full team members (currently only includes id's)
+    builder.addCase(setCurrentProject.pending, setStatusLoading);
+    builder.addCase(setCurrentProject.rejected, setStatusFailed);
     builder.addCase(
       setCurrentProject.fulfilled,
       (state: state, action) => {
@@ -32,26 +26,26 @@ export const ProjectOverviewSlice = createSlice({
         state.status = "success";
       }
     );
+
     //Add bug
-    builder.addCase(addProjectBug.pending, (state: state) => {
-      state.status = "loading";
-    });
-    builder.addCase(addProjectBug.rejected, (state: state) => {
-      state.status = "failed";
-    });
+    builder.addCase(addProjectBug.pending, setStatusLoading);
+    builder.addCase(addProjectBug.rejected, setStatusFailed);
     builder.addCase(addProjectBug.fulfilled, (state: state, action) => {
       state.value.issues = [...state.value.issues, action.payload.newBug];
       state.status = "success";
     });
 
-    //edit Bug
+    //Add team member
+    builder.addCase(addTeamMember.pending, setStatusLoading);
+    builder.addCase(addTeamMember.rejected, setStatusFailed);
+    builder.addCase(addTeamMember.fulfilled, (state: state, action) => {
+      state.value.team = action.payload.team;
+      state.status = "success";
+    });
 
-    builder.addCase(updateProjectBug.pending, (state: state) => {
-      state.status = "loading";
-    });
-    builder.addCase(updateProjectBug.rejected, (state: state) => {
-      state.status = "failed";
-    });
+    //edit Bug
+    builder.addCase(updateProjectBug.pending, setStatusLoading);
+    builder.addCase(updateProjectBug.rejected, setStatusFailed);
     builder.addCase(updateProjectBug.fulfilled, (state: state, action) => {
       state.value.issues.map((issue) => {
         return issue._id === action.payload.bug._id
