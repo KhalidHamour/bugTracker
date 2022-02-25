@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IUser } from "../../Interfaces";
+import { IProject, IUser } from "../../Interfaces";
+import { addProject } from "../ProjectsPage/projectPageActions";
 import { loginWithGoogle, logout } from "./authSliceActions";
 
 export const blankProfile = {
@@ -34,11 +35,26 @@ export const AuthSlice = createSlice({
     builder.addCase(loginWithGoogle.pending, (state: state) => {
       state.status = "loading";
     });
+    builder.addCase(loginWithGoogle.rejected, (state: state) => {
+      state.status = "failed";
+    });
     builder.addCase(loginWithGoogle.fulfilled, (state: state, action) => {
       state.status = "fulfilled";
       state.profile = action.payload.profile;
       state.token = action.payload.token;
     });
+
+    //appends added project to state and updates localstorage profile
+    builder.addCase(
+      addProject.fulfilled,
+      (state: state, action: PayloadAction<IProject>) => {
+        state.profile.projects.push(action.payload._id);
+        localStorage.setItem(
+          "profile",
+          JSON.stringify({ profile: state.profile, token: state.token })
+        );
+      }
+    );
   },
 });
 
