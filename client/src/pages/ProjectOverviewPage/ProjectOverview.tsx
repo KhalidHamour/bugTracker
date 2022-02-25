@@ -7,18 +7,19 @@ import Grid from "@mui/material/Grid";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import IssuePanel from "./ProjectOverviewPanels/IssuePanel";
-import TeamPanel from "./ProjectOverviewPanels/TeamPanel";
+import TeamPanel from "./ProjectOverviewPanels/TeamPanel/TeamPanel";
 import AppDialog from "../../features/common/AppDialog/AppDialog";
 
 /*styling*/
 import "./projectOverview.css";
 import { setCurrentProject } from "./projectOverviewActions";
+import { setCurrentPage } from "../../features/Layout/LayoutSilce";
 import { useAppDispatch } from "../../app/hooks";
 
 const ProjectOverview = () => {
   const [currentTab, setCurrentTab] = useState<number>(0);
   const [showAddModal, toggleShowModal] = useState<boolean>(false);
-  const { projectId } = useParams();
+  const { projectName, projectId } = useParams();
   const dispatch = useAppDispatch();
 
   const handleTabChange = (
@@ -32,7 +33,10 @@ const ProjectOverview = () => {
     if (projectId) {
       dispatch(setCurrentProject(projectId));
     }
-  }, [dispatch, projectId]);
+    if (projectName) {
+      dispatch(setCurrentPage(projectName));
+    }
+  }, [dispatch, projectId, projectName]);
 
   return (
     <>
