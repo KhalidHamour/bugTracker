@@ -2,18 +2,15 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { IProject } from "../../Interfaces";
 import {
+  state,
+  initialState,
+  setStatusLoading,
+  setStatusFailed,
   getUserProjects,
   addProject,
   deleteProject,
   updateProject,
 } from "./projectPageActions";
-
-type state = { status: string; value: IProject[] };
-
-const initialState: { status: string; value: IProject[] } = {
-  status: "",
-  value: [],
-};
 
 const ProjectsPageSlice = createSlice({
   name: "Projects",
@@ -21,12 +18,8 @@ const ProjectsPageSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     /*fetch projects*/
-    builder.addCase(getUserProjects.pending, (state: state) => {
-      state.status = "loading";
-    });
-    builder.addCase(getUserProjects.rejected, (state: state) => {
-      state.status = "failed";
-    });
+    builder.addCase(getUserProjects.pending, setStatusLoading);
+    builder.addCase(getUserProjects.rejected, setStatusFailed);
     builder.addCase(
       getUserProjects.fulfilled,
       (state, action: PayloadAction<{ projects: IProject[] }>) => {
@@ -35,12 +28,8 @@ const ProjectsPageSlice = createSlice({
       }
     );
     /* add project*/
-    builder.addCase(addProject.pending, (state: state) => {
-      state.status = "loading";
-    });
-    builder.addCase(addProject.rejected, (state: state) => {
-      state.status = "failed";
-    });
+    builder.addCase(addProject.pending, setStatusLoading);
+    builder.addCase(addProject.rejected, setStatusFailed);
     builder.addCase(
       addProject.fulfilled,
       (state, action: PayloadAction<IProject>) => {
@@ -49,12 +38,8 @@ const ProjectsPageSlice = createSlice({
       }
     );
     /* delete project*/
-    builder.addCase(deleteProject.pending, (state: state) => {
-      state.status = "loading";
-    });
-    builder.addCase(deleteProject.rejected, (state: state) => {
-      state.status = "failed";
-    });
+    builder.addCase(deleteProject.pending, setStatusLoading);
+    builder.addCase(deleteProject.rejected, setStatusFailed);
     builder.addCase(
       deleteProject.fulfilled,
       (state, action: PayloadAction<{ id: string }>) => {
@@ -66,25 +51,24 @@ const ProjectsPageSlice = createSlice({
     );
 
     /*update project*/
-    builder.addCase(updateProject.pending, (state: state) => {
-      state.status = "loading";
-    });
-    builder.addCase(updateProject.rejected, (state: state) => {
-      state.status = "failed";
-    });
+    builder.addCase(updateProject.pending, setStatusLoading);
+    builder.addCase(updateProject.rejected, setStatusFailed);
     builder.addCase(
       updateProject.fulfilled,
       (
         state: state,
         action: PayloadAction<{ updatedProject: IProject }>
       ) => {
-        state.value.map((project) => {});
-        //TODO:"complete this"
+        state.value.map((project) => {
+          if (project._id === action.payload.updatedProject._id) {
+            return action.payload.updatedProject;
+          } else {
+            return project;
+          }
+        });
         state.status = "success";
       }
     );
-
-    /*(reducers/actions) based on project overview slice*/
   },
 });
 

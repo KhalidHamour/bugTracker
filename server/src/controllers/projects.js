@@ -14,51 +14,6 @@ export const getUserProjects = async (req, res) => {
   }
 };
 
-export const getProjects = async (req, res) => {
-  const { id } = req.body;
-  try {
-    let foundProject = await projectModel.findById(id);
-
-    let _id = foundProject._id;
-    let name = foundProject.name;
-    let team = await getTeam(foundProject.team);
-    let issues = await getIssues(_id);
-    let __v = foundProject.__v;
-
-    let fullProject = { _id, name, team, issues, __v };
-
-    res.status(200).json({ fullProject });
-  } catch (error) {
-    res.status(404).json({ message: error.message });
-  }
-};
-
-const getTeam = async (id) => {
-  let team = await teamModel.findById(id);
-
-  var teamIds = team.members.map((member) => {
-    return member.memberId;
-  });
-  let members = await userModel.find({ _id: { $in: teamIds } });
-
-  let memberWithoutSensitiveInfo = members.map((member) => {
-    let _id = member._id;
-    let name = member.name;
-    let email = member.email;
-    let imageUrl = member.imageUrl;
-
-    return { _id, name, email, imageUrl };
-  });
-
-  return memberWithoutSensitiveInfo;
-};
-
-const getIssues = async (id) => {
-  let issues = await bugModel.find({ projectId: id });
-
-  return issues;
-};
-
 export const createProject = async (req, res) => {
   const { projectName, creatorId } = req.body;
 
@@ -70,7 +25,11 @@ export const createProject = async (req, res) => {
 
     const newTeam = await new teamModel({
       projectId: newProject._id,
-      members: [{ memberId: creatorId, role: "owner" }],
+      members: [{ memberId: creatorId, role: "OWNER" }],
+      roles: [
+        { role: "OWNER", permissions: ["FULL"] },
+        { role: "UNASSIGNED", permissions: ["NONE"] },
+      ],
     });
 
     newProject.team = newTeam._id;
@@ -88,8 +47,8 @@ export const createProject = async (req, res) => {
 };
 
 export const updateProject = async (req, res) => {
+  const id = req.params.id;
   try {
-    const id = req.params.id;
     const updatedProject = await projectModel.findById(id);
 
     req.body.name ? (updatedProject.name = req.body.name) : undefined;
@@ -128,4 +87,62 @@ export const deleteProject = async (req, res) => {
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
+};
+
+export const getFullProject = async (req, res) => {
+  const { id } = req.body;
+  try {
+    let foundProject = await projectModel.findById(id);
+
+    let _id = foundProject._id;
+    let name = foundProject.name;
+    let team = await getTeam(foundProject.team);
+    let issues = await getIssues(_id);
+    let __v = foundProject.__v;
+
+    let fullProject = { _id, name, team, issues, __v };
+
+    res.status(200).json({ fullProject });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+const getTeam = async (id) => {
+  let team = await teamModel.findById(id);
+
+  let memberWithoutSensitiveInfo = [];
+
+  for (const member of team.members) {
+    let profile = await userModel.findById(member.memberId);
+
+    let _id = profile._id;
+    let name = profile.name;
+    let email = profile.email;
+    let imageUrl = profile.imageUrl;
+    let role = member.role;
+
+    memberWithoutSensitiveInfo = [
+      ...memberWithoutSensitiveInfo,
+      { _id, name, email, imageUrl, role },
+    ];
+  }
+  let _id = team._id;
+  let projectId = team.projectId;
+  let roles = team.roles;
+
+  let retTeam = {
+    _id,
+    projectId,
+    roles,
+    members: memberWithoutSensitiveInfo,
+  };
+
+  return retTeam;
+};
+
+const getIssues = async (id) => {
+  let issues = await bugModel.find({ projectId: id });
+
+  return issues;
 };

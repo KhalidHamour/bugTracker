@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store";
 
-import { setCurentPage } from "../Layout/LayoutSilce";
+import { setCurrentPage } from "../Layout/LayoutSilce";
 import { authActions } from "../../pages/AuthPage/authSlice";
 
 const Nav = () => {
@@ -30,7 +30,7 @@ const Nav = () => {
     if (profile.name === "") {
       navigate("/");
     } else {
-      dispatch(setCurentPage(`${text}`));
+      dispatch(setCurrentPage(`${text}`));
       text === "Home"
         ? navigate(`/${profile.name}`)
         : navigate(`/${profile.name}/${text}`);

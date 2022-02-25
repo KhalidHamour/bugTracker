@@ -10,12 +10,12 @@ const layoutSlice = createSlice({
   name: "currentPage",
   initialState: initialState,
   reducers: {
-    setCurentPage: (state, payload) => {
+    setCurrentPage: (state, payload) => {
       state.value = payload.payload;
     },
   },
 });
 
-export const { setCurentPage } = layoutSlice.actions;
+export const { setCurrentPage } = layoutSlice.actions;
 
 export default layoutSlice.reducer;

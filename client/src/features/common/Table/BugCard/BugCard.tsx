@@ -105,7 +105,7 @@ const BugCard = (props: IProps) => {
           handleClose();
         }}
       >
-        {team.map((member, count = 0) => {
+        {team.members.map((member, count = 0) => {
           return (
             <MenuItem
               key={`menu-item-${count++}`}

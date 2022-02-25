@@ -1,4 +1,3 @@
-/*components*/
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
@@ -6,45 +5,47 @@ import DialogActions from "@mui/material/DialogActions";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
-/*hooks*/
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { useState } from "react";
+
 import { RootState } from "../../../app/store";
-/*Actions*/
-import { addProject } from "../../../pages/ProjectsPage/projectPageActions";
+import { useState } from "react";
+import { addTeamMember } from "../../../pages/ProjectOverviewPage/projectOverviewActions";
 
 interface Iprops {
   close(): any;
 }
 
-const AddProjectDialog = (props: Iprops) => {
-  const [newProjectName, setNewProjectName] = useState<string>("");
+const AddTeamMemberDialog = (props: Iprops) => {
   let dispatch = useAppDispatch();
-  const creatorId = useAppSelector(
-    (state: RootState) => state.Auth.profile._id
+  let { _id } = useAppSelector(
+    (state: RootState) => state.CurrentProject.value
   );
+  const [newMemberEmail, setNewMemberEmail] = useState<string>("");
+
   const handleSubmit = () => {
-    dispatch(
-      addProject({ projectName: newProjectName, creatorId: creatorId })
-    );
+    dispatch(addTeamMember({ email: newMemberEmail, id: _id }));
     props.close();
   };
+
   return (
     <>
-      <DialogTitle>{"Add a new issue"}</DialogTitle>
+      <DialogTitle>Add a new Member</DialogTitle>
       <DialogContent>
-        <DialogContentText>{"New Project Name"}</DialogContentText>
+        <DialogContentText>{"New member email"}</DialogContentText>
         <TextField
-          value={newProjectName}
+          value={newMemberEmail}
           onChange={(event) => {
-            setNewProjectName(event.target.value);
+            setNewMemberEmail(event.target.value);
           }}
           fullWidth
         ></TextField>
+        <DialogContentText>
+          {"please ensure they already hava an account"}
+        </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button variant={"contained"} onClick={handleSubmit}>
-          Create new Project
+          Add team member
         </Button>
         <Button variant={"contained"} onClick={props.close}>
           Cancel
@@ -54,4 +55,4 @@ const AddProjectDialog = (props: Iprops) => {
   );
 };
 
-export default AddProjectDialog;
+export default AddTeamMemberDialog;

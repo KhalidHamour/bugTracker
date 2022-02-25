@@ -4,4 +4,5 @@ export interface IMember {
   email: string;
   imageUrl: string;
   __v: number;
+  role: string;
 }

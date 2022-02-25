@@ -16,7 +16,7 @@ import { RootState } from "../../app/store";
 
 /*Actions*/
 import { getUserProjects, deleteProject } from "./projectPageActions";
-import { setCurentPage } from "../../features/Layout/LayoutSilce";
+import { setCurrentPage } from "../../features/Layout/LayoutSilce";
 import { setCurrentProject } from "../ProjectOverviewPage/projectOverviewActions";
 
 /*styling*/
@@ -48,9 +48,9 @@ const ProjectsPage = () => {
     project: IProject
   ) => {
     if (e.currentTarget === e.target) {
-      navigate(`/${profile.name}/projects/${project._id}`);
+      navigate(`/${profile.name}/projects/${project.name}/${project._id}`);
       dispatch(setCurrentProject(project._id));
-      dispatch(setCurentPage(project.name));
+      dispatch(setCurrentPage(project.name));
     }
   };
 

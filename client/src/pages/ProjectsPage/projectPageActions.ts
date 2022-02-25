@@ -2,6 +2,20 @@ import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { IBug, IProject } from "../../Interfaces";
 import projectServices from "../../api/projectServices";
 
+export type state = { status: string; value: IProject[] };
+
+export const initialState: { status: string; value: IProject[] } = {
+  status: "",
+  value: [],
+};
+
+export const setStatusLoading = (state: state) => {
+  state.status = "loading";
+};
+export const setStatusFailed = (state: state) => {
+  state.status = "falied";
+};
+
 export const getUserProjects = createAsyncThunk(
   "projects/getProjects",
   async (ids: string[], thunkAPI) => {
@@ -17,7 +31,7 @@ export const addProject = createAsyncThunk(
   "projects/addProject",
   async (data: { projectName: string; creatorId: string }, thunkAPI) => {
     try {
-      const response = await projectServices.create(data);
+      const response = await projectServices.createNewProject(data);
       return response.data;
     } catch (error) {}
   }
