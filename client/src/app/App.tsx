@@ -15,6 +15,7 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<Auth />} />
+            <Route path="/:user" element={<Layout></Layout>} />
             <Route
               path="/:user/projects"
               element={
@@ -23,8 +24,9 @@ function App() {
                 </Layout>
               }
             />
+            <Route path="/:user/settings" element={<Layout></Layout>} />
             <Route
-              path="/:user/projects/:projectId"
+              path="/:user/projects/:projectName/:projectId"
               element={
                 <Layout>
                   <ProjectOverview />
