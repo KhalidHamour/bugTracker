@@ -24,7 +24,10 @@ const fetchFullProject = (id: string) =>
     data: { id: id },
   });
 
-const create = (data: { projectName: string; creatorId: string }) =>
+const createNewProject = (data: {
+  projectName: string;
+  creatorId: string;
+}) =>
   axios({
     method: "post",
     url: `${url}/createProject`,
@@ -57,7 +60,7 @@ const projectServices = {
   fetchProjects,
   fetchUserProjects,
   fetchFullProject,
-  create,
+  createNewProject,
   remove,
   update,
 };
