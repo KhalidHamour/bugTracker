@@ -1,10 +1,10 @@
 import { IBug } from "./IBug";
-import { IMember } from "./IMember";
+import { ITeam } from "./ITeam";
 
 export interface IProject {
   _id: string;
   name: string;
-  team: IMember[];
+  team: ITeam;
   issues: IBug[];
   __v: number;
 }
