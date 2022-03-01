@@ -2,6 +2,8 @@ import bugModel from "../models/bugModel.js";
 import projectModel from "../models/projectModel.js";
 import teamModel from "../models/teamModel.js";
 import userModel from "../models/userModel.js";
+import { getTeam } from "../helper/team.js";
+import { getIssues } from "../helper/issues.js";
 
 export const getUserProjects = async (req, res) => {
   const { ids } = req.body;
@@ -71,8 +73,6 @@ export const deleteProject = async (req, res) => {
       return member.memberId;
     });
 
-    console.log(teamIds);
-
     for (const member of teamIds) {
       await userModel.findByIdAndUpdate(member, {
         $pull: { projects: project._id },
@@ -106,43 +106,4 @@ export const getFullProject = async (req, res) => {
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
-};
-
-const getTeam = async (id) => {
-  let team = await teamModel.findById(id);
-
-  let memberWithoutSensitiveInfo = [];
-
-  for (const member of team.members) {
-    let profile = await userModel.findById(member.memberId);
-
-    let _id = profile._id;
-    let name = profile.name;
-    let email = profile.email;
-    let imageUrl = profile.imageUrl;
-    let role = member.role;
-
-    memberWithoutSensitiveInfo = [
-      ...memberWithoutSensitiveInfo,
-      { _id, name, email, imageUrl, role },
-    ];
-  }
-  let _id = team._id;
-  let projectId = team.projectId;
-  let roles = team.roles;
-
-  let retTeam = {
-    _id,
-    projectId,
-    roles,
-    members: memberWithoutSensitiveInfo,
-  };
-
-  return retTeam;
-};
-
-const getIssues = async (id) => {
-  let issues = await bugModel.find({ projectId: id });
-
-  return issues;
 };
