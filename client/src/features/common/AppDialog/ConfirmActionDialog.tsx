@@ -15,7 +15,7 @@ interface Iprops {
   close(): any;
 }
 
-const AddTeamMemberDialog = (props: Iprops) => {
+const ConfirmActionDialog = (props: Iprops) => {
   let dispatch = useAppDispatch();
   let { _id } = useAppSelector(
     (state: RootState) => state.CurrentProject.value
@@ -23,36 +23,16 @@ const AddTeamMemberDialog = (props: Iprops) => {
   const [newMemberEmail, setNewMemberEmail] = useState<string>("");
 
   const handleSubmit = () => {
-    dispatch(addTeamMember({ email: newMemberEmail, id: _id }));
     props.close();
   };
 
   return (
     <>
       <DialogTitle>Add a new Member</DialogTitle>
-      <DialogContent>
-        <DialogContentText>{"New member email"}</DialogContentText>
-        <TextField
-          value={newMemberEmail}
-          onChange={(event) => {
-            setNewMemberEmail(event.target.value);
-          }}
-          fullWidth
-        ></TextField>
-        <DialogContentText>
-          {"please ensure they already hava an account"}
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button variant={"contained"} onClick={props.close}>
-          Cancel
-        </Button>
-        <Button variant={"contained"} onClick={handleSubmit}>
-          Add team member
-        </Button>
-      </DialogActions>
+      <DialogContent></DialogContent>
+      <DialogActions></DialogActions>
     </>
   );
 };
 
-export default AddTeamMemberDialog;
+export default ConfirmActionDialog;

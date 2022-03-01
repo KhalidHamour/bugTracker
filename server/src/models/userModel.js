@@ -25,6 +25,15 @@ const userSchema = mongoose.Schema({
     ],
     default: [],
   },
+  AssignedIssues: {
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "bugModel",
+      },
+    ],
+    default: [],
+  },
 });
 
 const userModel = mongoose.model("userModel", userSchema, "users");

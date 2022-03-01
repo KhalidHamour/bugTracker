@@ -46,6 +46,15 @@
   overflow-y: scroll;
 }
 
+.project-details-container {
+  position: relative;
+  bottom: 0;
+  height: 90%;
+  width: 100%;
+  left: 20px;
+  overflow-y: scroll;
+}
+
 .table-column-contents {
   display: flex;
   height: 90%;
