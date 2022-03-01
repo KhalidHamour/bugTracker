@@ -13,8 +13,7 @@ const teamSchema = mongoose.Schema({
       },
       role: {
         type: String,
-        enum: ["OWNER", "UNASSIGNED"],
-        default: ["UNASSINGED"],
+        default: "UNASSINGED",
       },
     },
   ],
