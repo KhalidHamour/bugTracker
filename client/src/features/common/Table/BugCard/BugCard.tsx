@@ -4,16 +4,16 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import AppMenu from "../../Menu/AppMenu";
+import EditIcon from "@mui/icons-material/Edit";
 /*interfaces*/
 import { IBug } from "../../../../Interfaces";
 /*Hooks*/
-import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
-import { updateProjectBug } from "../../../../pages/ProjectOverviewPage/projectOverviewActions";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
-import { RootState } from "../../../../app/store";
-import { Avatar } from "@mui/material";
+import { useAppDispatch } from "../../../../app/hooks";
+import { updateProjectBug } from "../../../../pages/ProjectOverviewPage/projectOverviewActions";
+import AppDialog from "../../AppDialog/AppDialog";
 
 interface IProps {
   details: IBug;
@@ -22,37 +22,45 @@ interface IProps {
 
 const BugCard = (props: IProps) => {
   const dispatch = useAppDispatch();
-  const { team } = useAppSelector(
-    (state: RootState) => state.CurrentProject.value
-  );
+
   const [showMenu, toggleShowMenu] = useState<boolean>(false);
+  const [showEditBugModal, toggleShowEditBugModal] =
+    useState<boolean>(false);
+  const [showAssignMultipleDialog, toggleShowAssignMultipleDialog] =
+    useState<boolean>(false);
   const [anchor, setAnchor] = useState<null | HTMLElement>(null);
   const bugID = props.details._id;
 
-  const handleClose = () => {
+  const handleAssignToMenuClose = () => {
     setAnchor(null);
-    toggleShowMenu(!showMenu);
+    toggleShowMenu(false);
   };
 
-  const handleStatusChange = (status: string, assignTo?: string) => {
-    status === "Assigned"
-      ? dispatch(
-          updateProjectBug({
-            _id: bugID,
-            bug: { status: status, assignedTo: assignTo },
-          })
-        )
-      : dispatch(
-          updateProjectBug({
-            _id: bugID,
-            bug: { status: status },
-          })
-        );
+  const handleStatusChange = (status: string) => {
+    dispatch(
+      updateProjectBug({
+        _id: bugID,
+        bug: { status: status },
+      })
+    );
+  };
+
+  const handleModalClose = () => {
+    toggleShowEditBugModal(false);
+    toggleShowAssignMultipleDialog(false);
+  };
+
+  const handleBugMenuClick = () => {
+    toggleShowEditBugModal(true);
   };
 
   return (
     <>
       <Card variant={"outlined"}>
+        <IconButton onClick={handleBugMenuClick}>
+          <EditIcon />
+        </IconButton>
+
         <CardContent
           sx={{
             display: "flex",
@@ -65,16 +73,28 @@ const BugCard = (props: IProps) => {
         </CardContent>
         <CardActions>
           {props.variant === "Open" && (
-            <Button
-              size="small"
-              onClick={(e) => {
-                e.preventDefault();
-                setAnchor(e.currentTarget);
-                toggleShowMenu(!showMenu);
-              }}
-            >
-              Assign to
-            </Button>
+            <>
+              <Button
+                size="small"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setAnchor(e.currentTarget);
+                  toggleShowMenu(!showMenu);
+                }}
+              >
+                Assign to
+              </Button>
+              <Button
+                size="small"
+                onClick={() => {
+                  toggleShowAssignMultipleDialog(
+                    !showAssignMultipleDialog
+                  );
+                }}
+              >
+                Assign Multiple
+              </Button>
+            </>
           )}
           {props.variant === "Assigned" && (
             <Button
@@ -98,28 +118,29 @@ const BugCard = (props: IProps) => {
           )}
         </CardActions>
       </Card>
-      <Menu
+      <AppMenu
+        variant="AssignTo"
         open={showMenu}
-        anchorEl={anchor}
-        onClose={() => {
-          handleClose();
-        }}
-      >
-        {team.members.map((member, count = 0) => {
-          return (
-            <MenuItem
-              key={`menu-item-${count++}`}
-              onClick={() => {
-                handleStatusChange("Assigned", member._id);
-                handleClose();
-              }}
-            >
-              <Avatar src={member.imageUrl} alt={member.name} />
-              {member.name}
-            </MenuItem>
-          );
-        })}
-      </Menu>
+        anchor={anchor}
+        onClose={handleAssignToMenuClose}
+        data={props.details}
+      />
+
+      <AppDialog
+        variant="EditBug"
+        open={showEditBugModal}
+        onClose={handleModalClose}
+        onBackDropClick={handleModalClose}
+        data={props.details}
+      />
+
+      <AppDialog
+        variant="AssignMultiple"
+        open={showAssignMultipleDialog}
+        onClose={handleModalClose}
+        onBackDropClick={handleModalClose}
+        data={props.details}
+      />
     </>
   );
 };

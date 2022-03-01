@@ -10,20 +10,26 @@ import { useAppSelector } from "../../../../app/hooks";
 import { RootState } from "../../../../app/store";
 import { useState } from "react";
 import { IMember } from "../../../../Interfaces/IMember";
-import { ITeam } from "../../../../Interfaces/ITeam";
 
 const TeamPanel = () => {
-  const [showAddModal, toggleShowModal] = useState<boolean>(false);
+  const [showAddModal, toggleShowAddModal] = useState<boolean>(false);
+  const [showEditModal, toggleShowEditModal] = useState<boolean>(false);
+  const [editModalData, setEditModalData] = useState<IMember | null>(null);
   const { team } = useAppSelector(
     (state: RootState) => state.CurrentProject.value
   );
 
   const handleAddMemberClick = () => {
-    toggleShowModal(!showAddModal);
+    toggleShowAddModal(!showAddModal);
+  };
+  const handleEditMemberClick = (member: IMember) => {
+    setEditModalData(member);
+    toggleShowEditModal(!showEditModal);
   };
 
   const handleClose = () => {
-    toggleShowModal(!showAddModal);
+    toggleShowAddModal(false);
+    toggleShowEditModal(false);
   };
 
   return (
@@ -41,7 +47,13 @@ const TeamPanel = () => {
                 variant="outlined"
                 key={`team-list-member-${count++}`}
               >
-                <ListItem alignItems="center">
+                <ListItem
+                  alignItems="center"
+                  onClick={() => {
+                    handleEditMemberClick(member);
+                  }}
+                  sx={{ cursor: "pointer" }}
+                >
                   <TeamListLitem
                     imgUrl={member.imageUrl}
                     name={member.name}
@@ -71,7 +83,14 @@ const TeamPanel = () => {
         variant={"AddTeamMember"}
         onClose={handleClose}
         onBackDropClick={handleClose}
-      ></AppDialog>
+      />
+      <AppDialog
+        open={showEditModal}
+        variant={"EditTeamMember"}
+        onClose={handleClose}
+        onBackDropClick={handleClose}
+        data={editModalData}
+      />
     </>
   );
 };

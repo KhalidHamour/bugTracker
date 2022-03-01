@@ -43,11 +43,11 @@ const AddProjectDialog = (props: Iprops) => {
         ></TextField>
       </DialogContent>
       <DialogActions>
-        <Button variant={"contained"} onClick={handleSubmit}>
-          Create new Project
-        </Button>
         <Button variant={"contained"} onClick={props.close}>
           Cancel
+        </Button>
+        <Button variant={"contained"} onClick={handleSubmit}>
+          Create new Project
         </Button>
       </DialogActions>
     </>
