@@ -8,6 +8,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import IssuePanel from "./ProjectOverviewPanels/IssuePanel";
 import TeamPanel from "./ProjectOverviewPanels/TeamPanel/TeamPanel";
+import ProjectDetailsPanel from "./ProjectOverviewPanels/ProjectDetailsPanel/ProjectDetailsPanel";
 import AppDialog from "../../features/common/AppDialog/AppDialog";
 
 /*styling*/
@@ -51,6 +52,7 @@ const ProjectOverview = () => {
             <Tabs value={currentTab} onChange={handleTabChange}>
               <Tab label="issues" />
               <Tab label="Team" />
+              <Tab label="Project Details" />
             </Tabs>
           </Grid>
         </Grid>
@@ -62,6 +64,7 @@ const ProjectOverview = () => {
             />
           )}
           {currentTab === 1 && <TeamPanel />}
+          {currentTab === 2 && <ProjectDetailsPanel />}
         </Grid>
       </Grid>
 
