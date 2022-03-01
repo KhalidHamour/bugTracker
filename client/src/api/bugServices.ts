@@ -13,13 +13,20 @@ const create = (
     data: { bug, projectId },
   });
 
+const assignBug = (bugId: string, userIds: string[]) =>
+  axios({
+    method: "PUT",
+    url: `${url}/assign`,
+    data: { bugId, userIds },
+  });
+
 const update = (
   _id: string,
   updatedBug: {
     title?: string;
     description?: string;
     status?: string;
-    assignedTo?: string;
+    assignedTo?: string[];
   }
 ) =>
   axios({
@@ -28,9 +35,18 @@ const update = (
     data: { _id, updatedBug },
   });
 
+const deleteBug = (_id: string) =>
+  axios({
+    method: "delete",
+    url: `${url}/deleteBug`,
+    data: { _id },
+  });
+
 const bugServices = {
   create,
   update,
+  assignBug,
+  deleteBug,
 };
 
 export default bugServices;
