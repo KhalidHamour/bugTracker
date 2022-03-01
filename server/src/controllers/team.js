@@ -1,22 +1,21 @@
 import teamModel from "../models/teamModel.js";
 import userModel from "../models/userModel.js";
+import { getTeam } from "../helper/team.js";
 
 export const addTeamMember = async (req, res) => {
   const { email, id } = req.body;
 
   try {
     const existingUser = await userModel.findOne({ email: email });
+    const team = await teamModel.findOne({ projectId: id });
+    const existingTeamMember = await teamModel.find({
+      "members.memberId": existingUser._id,
+    });
 
     if (!existingUser)
       return res.status(400).json({ message: "user does not exist" });
 
-    const team = await teamModel.findOne({ projectId: id });
-
     if (!team) return res.status(400).json({ message: "team not found" });
-
-    const existingTeamMember = await teamModel.find({
-      "members.memberId": existingUser._id,
-    });
 
     if (existingTeamMember[0])
       return res
@@ -41,41 +40,88 @@ export const addTeamMember = async (req, res) => {
   }
 };
 
+export const editTeamMemberRole = async (req, res) => {
+  const { teamId, memberId, newRoleName } = req.body;
+  try {
+    const team = await teamModel.findOne({ _id: teamId });
+
+    let membersEdit = team.members.map((member) => {
+      if (member.memberId.toString() === memberId) {
+        return {
+          memberId: member.memberId,
+          role: newRoleName,
+          _id: member._id,
+        };
+      } else {
+        return member;
+      }
+    });
+
+    team.members = membersEdit;
+
+    await team.save();
+
+    let newTeam = await getTeam(team._id);
+
+    return res.status(200).json({ newTeam });
+  } catch (error) {
+    return res.status(404).json({ error });
+  }
+};
+
 export const removeTeamMember = async (req, res) => {
   const { userId, projectId } = req.body;
 
-  console.log(userId, projectId);
+  try {
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
 };
 
-const getTeam = async (id) => {
-  let team = await teamModel.findById(id);
+export const addTeamRole = async (req, res) => {
+  const { projectId, roleName } = req.body.data;
 
-  let memberWithoutSensitiveInfo = [];
+  try {
+    let team = await teamModel.findOne({ projectId: projectId });
 
-  for (const member of team.members) {
-    let profile = await userModel.findById(member.memberId);
+    let newRole = { role: roleName, permissions: ["NONE"] };
 
-    let _id = profile._id;
-    let name = profile.name;
-    let email = profile.email;
-    let imageUrl = profile.imageUrl;
-    let role = member.role;
+    team.roles = [...team.roles, newRole];
+    await team.save();
 
-    memberWithoutSensitiveInfo = [
-      ...memberWithoutSensitiveInfo,
-      { _id, name, email, imageUrl, role },
-    ];
+    return res.status(200).json(team.roles);
+  } catch (error) {
+    return res.status(404).json({ error });
   }
-  let _id = team._id;
-  let projectId = team.projectId;
-  let roles = team.roles;
+};
+export const editTeamRole = async (req, res) => {
+  const { projectId, role } = req.body.data;
 
-  let retTeam = {
-    _id,
-    projectId,
-    roles,
-    members: memberWithoutSensitiveInfo,
-  };
+  try {
+    let team = await teamModel.findOne({ projectId: projectId });
 
-  return retTeam;
+    let newRoles = team.roles.map((teamRole) => {
+      if (teamRole._id.toString() === role._id) {
+        return { ...role, _id: teamRole._id };
+      } else {
+        return teamRole;
+      }
+    });
+
+    team.roles = newRoles;
+    await team.save();
+
+    return res.status(200).json(team.roles);
+  } catch (error) {
+    return res.status(404).json({ error });
+  }
+};
+export const removeTeamRole = async (req, res) => {
+  const { projectId, roleId } = req.body.data;
+
+  try {
+    const team = await teamModel.findOne({ projectId: projectId });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
 };
