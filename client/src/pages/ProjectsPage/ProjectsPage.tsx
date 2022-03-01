@@ -3,8 +3,6 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
@@ -15,7 +13,7 @@ import { MouseEvent, useEffect, useState } from "react";
 import { RootState } from "../../app/store";
 
 /*Actions*/
-import { getUserProjects, deleteProject } from "./projectPageActions";
+import { getUserProjects } from "./projectPageActions";
 import { setCurrentPage } from "../../features/Layout/LayoutSilce";
 import { setCurrentProject } from "../ProjectOverviewPage/projectOverviewActions";
 
@@ -23,6 +21,7 @@ import { setCurrentProject } from "../ProjectOverviewPage/projectOverviewActions
 import "./projectpage.css";
 import { IProject } from "../../Interfaces";
 import AppDialog from "../../features/common/AppDialog/AppDialog";
+import AppMenu from "../../features/common/Menu/AppMenu";
 
 const ProjectsPage = () => {
   const [showAddModal, toggleShowModal] = useState<boolean>(false);
@@ -127,23 +126,14 @@ const ProjectsPage = () => {
               </Grid>
             );
           })}
-        {/* TODO:this can be its own component */}
-        <Menu
+
+        <AppMenu
+          variant="ProjectsPage"
           open={showMenu}
-          anchorEl={anchor}
-          onClose={() => {
-            handleClose();
-          }}
-        >
-          <MenuItem
-            onClick={() => {
-              dispatch(deleteProject(menuProjectID));
-              handleClose();
-            }}
-          >
-            {"delete"}
-          </MenuItem>
-        </Menu>
+          anchor={anchor}
+          onClose={handleClose}
+          data={menuProjectID}
+        />
       </Grid>
 
       <AppDialog
