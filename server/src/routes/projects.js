@@ -13,7 +13,7 @@ const router = express.Router();
 router.post("/", getFullProject);
 router.post("/fetchUserProjects", getUserProjects);
 router.post("/createProject", createProject);
-router.put("/:id", updateProject);
+router.put("/updateProject", updateProject);
 router.delete("/", deleteProject);
 
 export default router;
