@@ -5,6 +5,25 @@ import userModel from "../models/userModel.js";
 import { getTeam } from "../helper/team.js";
 import { getIssues } from "../helper/issues.js";
 
+export const getFullProject = async (req, res) => {
+  const { id } = req.body;
+  try {
+    let foundProject = await projectModel.findById(id);
+
+    let _id = foundProject._id;
+    let name = foundProject.name;
+    let team = await getTeam(foundProject.team);
+    let issues = await getIssues(_id);
+    let __v = foundProject.__v;
+
+    let fullProject = { _id, name, team, issues, __v };
+
+    res.status(200).json({ fullProject });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
 export const getUserProjects = async (req, res) => {
   const { ids } = req.body;
   try {
@@ -49,17 +68,17 @@ export const createProject = async (req, res) => {
 };
 
 export const updateProject = async (req, res) => {
-  const id = req.params.id;
+  const { projectId, name } = req.body;
   try {
-    const updatedProject = await projectModel.findById(id);
+    const project = await projectModel.findById(projectId);
 
-    req.body.name ? (updatedProject.name = req.body.name) : undefined;
+    project.name = name;
 
-    let response = await updatedProject.save();
+    await project.save();
 
-    res.status(201).json(response);
+    return res.status(201).json({ project });
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    return res.status(404).json({ message: error.message });
   }
 };
 
@@ -84,25 +103,6 @@ export const deleteProject = async (req, res) => {
     await projectModel.findByIdAndDelete(id);
 
     res.status(201).json({ id: id });
-  } catch (error) {
-    res.status(404).json({ message: error.message });
-  }
-};
-
-export const getFullProject = async (req, res) => {
-  const { id } = req.body;
-  try {
-    let foundProject = await projectModel.findById(id);
-
-    let _id = foundProject._id;
-    let name = foundProject.name;
-    let team = await getTeam(foundProject.team);
-    let issues = await getIssues(_id);
-    let __v = foundProject.__v;
-
-    let fullProject = { _id, name, team, issues, __v };
-
-    res.status(200).json({ fullProject });
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
