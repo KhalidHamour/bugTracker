@@ -14,6 +14,8 @@ import {
   editTeamMemberRole,
   assignBug,
   deleteBug,
+  removeTeamMember,
+  deleteRole,
 } from "./projectOverviewActions";
 
 export const ProjectOverviewSlice = createSlice({
@@ -24,13 +26,10 @@ export const ProjectOverviewSlice = createSlice({
     //fetch project details i.e. full issues and  full team members (currently only includes id's)
     builder.addCase(setCurrentProject.pending, setStatusLoading);
     builder.addCase(setCurrentProject.rejected, setStatusFailed);
-    builder.addCase(
-      setCurrentProject.fulfilled,
-      (state: state, action) => {
-        state.value = action.payload.fullProject;
-        state.status = "success";
-      }
-    );
+    builder.addCase(setCurrentProject.fulfilled, (state: state, action) => {
+      state.value = action.payload.fullProject;
+      state.status = "success";
+    });
 
     //Add bug
     builder.addCase(addProjectBug.pending, setStatusLoading);
@@ -45,9 +44,7 @@ export const ProjectOverviewSlice = createSlice({
     builder.addCase(updateProjectBug.rejected, setStatusFailed);
     builder.addCase(updateProjectBug.fulfilled, (state: state, action) => {
       state.value.issues = state.value.issues.map((issue) => {
-        return issue._id === action.payload.bug._id
-          ? action.payload.bug
-          : issue;
+        return issue._id === action.payload.bug._id ? action.payload.bug : issue;
       });
       state.status = "success";
     });
@@ -70,9 +67,7 @@ export const ProjectOverviewSlice = createSlice({
     builder.addCase(deleteBug.pending, setStatusLoading);
     builder.addCase(deleteBug.rejected, setStatusFailed);
     builder.addCase(deleteBug.fulfilled, (state: state, action) => {
-      state.value.issues = state.value.issues.filter(
-        (bug) => bug._id !== action.payload.id
-      );
+      state.value.issues = state.value.issues.filter((bug) => bug._id !== action.payload.id);
       state.status = "success";
     });
 
@@ -84,16 +79,22 @@ export const ProjectOverviewSlice = createSlice({
       state.status = "success";
     });
 
+    //delete team member
+    builder.addCase(removeTeamMember.pending, setStatusLoading);
+    builder.addCase(removeTeamMember.rejected, setStatusFailed);
+    builder.addCase(removeTeamMember.fulfilled, (state: state, action) => {
+      state.value.team = action.payload.team;
+      state.value.issues = action.payload.issues;
+      state.status = "success";
+    });
+
     //edit team member Role
     builder.addCase(editTeamMemberRole.pending, setStatusLoading);
     builder.addCase(editTeamMemberRole.rejected, setStatusFailed);
-    builder.addCase(
-      editTeamMemberRole.fulfilled,
-      (state: state, action) => {
-        state.value.team = action.payload.newTeam;
-        state.status = "success";
-      }
-    );
+    builder.addCase(editTeamMemberRole.fulfilled, (state: state, action) => {
+      state.value.team = action.payload.newTeam;
+      state.status = "success";
+    });
 
     //Add team role
     builder.addCase(addRole.pending, setStatusLoading);
@@ -107,7 +108,14 @@ export const ProjectOverviewSlice = createSlice({
     builder.addCase(editRole.pending, setStatusLoading);
     builder.addCase(editRole.rejected, setStatusFailed);
     builder.addCase(editRole.fulfilled, (state: state, action) => {
-      state.value.team.roles = action.payload;
+      state.value.team = action.payload.team;
+      state.status = "success";
+    });
+    //delete team role
+    builder.addCase(deleteRole.pending, setStatusLoading);
+    builder.addCase(deleteRole.rejected, setStatusFailed);
+    builder.addCase(deleteRole.fulfilled, (state: state, action) => {
+      state.value.team = action.payload.team;
       state.status = "success";
     });
   },

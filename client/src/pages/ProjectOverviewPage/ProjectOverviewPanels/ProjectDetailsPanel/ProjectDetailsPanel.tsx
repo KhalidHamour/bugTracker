@@ -6,11 +6,13 @@ import { useState } from "react";
 import { useAppSelector } from "../../../../app/hooks";
 import { RootState } from "../../../../app/store";
 
-const ProjectDetailsPanel = () => {
+interface IProps {
+  perms: string[];
+}
+
+const ProjectDetailsPanel = (props: IProps) => {
   const [showEditRolesModal, toggleShowModal] = useState<boolean>(false);
-  const project = useAppSelector(
-    (state: RootState) => state.CurrentProject.value
-  );
+  const project = useAppSelector((state: RootState) => state.CurrentProject.value);
 
   const handleEditRolesClick = () => {
     toggleShowModal(!showEditRolesModal);
@@ -28,14 +30,10 @@ const ProjectDetailsPanel = () => {
               <ListItemText>Project Name: {project.name}</ListItemText>
             </ListItem>
             <ListItem>
-              <ListItemText>
-                # Team Members: {project.team.members.length}
-              </ListItemText>
+              <ListItemText># Team Members: {project.team.members.length}</ListItemText>
             </ListItem>
             <ListItem>
-              <ListItemText>
-                # Issues: {project.issues.length}
-              </ListItemText>
+              <ListItemText># Issues: {project.issues.length}</ListItemText>
             </ListItem>
           </List>
         </Section>
@@ -54,9 +52,15 @@ const ProjectDetailsPanel = () => {
               );
             })}
             <br></br>
-            <Button variant={"contained"} onClick={handleEditRolesClick}>
-              Edit Roles
-            </Button>
+            {props.perms.includes("FULL") || props.perms.includes("EDITROLES") ? (
+              <Button variant={"contained"} onClick={handleEditRolesClick}>
+                Edit Roles
+              </Button>
+            ) : (
+              <Button disabled variant={"contained"} onClick={handleEditRolesClick}>
+                Edit Roles
+              </Button>
+            )}
             <br></br>
           </List>
         </Section>
@@ -67,7 +71,8 @@ const ProjectDetailsPanel = () => {
         variant={"EditRoles"}
         onClose={handleClose}
         onBackDropClick={handleClose}
-      ></AppDialog>
+        perms={props.perms}
+      />
     </>
   );
 };

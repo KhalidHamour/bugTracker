@@ -9,6 +9,7 @@ export type state = { value: IProject; status: string };
 export const initialState: state = {
   value: {
     _id: "",
+    creator: "",
     name: "",
     team: { _id: "", projectId: "", members: [], roles: [] },
     issues: [],
@@ -110,12 +111,22 @@ export const addTeamMember = createAsyncThunk(
 
 export const editTeamMemberRole = createAsyncThunk(
   "ProjectOverview/editTeamMemberRole",
-  async (
-    data: { teamId: string; memberId: string; newRoleName: string },
-    thunkAPI
-  ) => {
+  async (data: { teamId: string; memberId: string; newRoleName: string }, thunkAPI) => {
     try {
       const response = await teamServices.editTeamMemberRole(data);
+
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+export const removeTeamMember = createAsyncThunk(
+  "ProjectOverview/removeTeamMember",
+  async (data: { projectId: string; userId: string }, thunkAPI) => {
+    try {
+      const response = await teamServices.removeTeamMember(data);
 
       return response.data;
     } catch (error) {
@@ -157,10 +168,7 @@ export const assignBug = createAsyncThunk(
     thunkAPI
   ) => {
     try {
-      const response = await bugServices.assignBug(
-        data.bugId,
-        data.userIds
-      );
+      const response = await bugServices.assignBug(data.bugId, data.userIds);
 
       return response.data;
     } catch (error) {
