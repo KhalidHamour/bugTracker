@@ -9,24 +9,36 @@ import Tab from "@mui/material/Tab";
 import IssuePanel from "./ProjectOverviewPanels/IssuePanel";
 import TeamPanel from "./ProjectOverviewPanels/TeamPanel/TeamPanel";
 import ProjectDetailsPanel from "./ProjectOverviewPanels/ProjectDetailsPanel/ProjectDetailsPanel";
-import AppDialog from "../../features/common/AppDialog/AppDialog";
 
 /*styling*/
 import "./projectOverview.css";
 import { setCurrentProject } from "./projectOverviewActions";
 import { setCurrentPage } from "../../features/Layout/LayoutSilce";
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { RootState } from "../../app/store";
 
 const ProjectOverview = () => {
   const [currentTab, setCurrentTab] = useState<number>(0);
-  const [showAddModal, toggleShowModal] = useState<boolean>(false);
+
   const { projectName, projectId } = useParams();
+  const { _id } = useAppSelector((state: RootState) => state.Auth.profile);
+  const { members, roles } = useAppSelector((state: RootState) => state.CurrentProject.value.team);
   const dispatch = useAppDispatch();
 
-  const handleTabChange = (
-    event: React.SyntheticEvent,
-    newValue: number
-  ) => {
+  let currentRole: string = "";
+  let permissons: string[] = [];
+  members.forEach((member) => {
+    if (member._id === _id) {
+      currentRole = member.role;
+    }
+  });
+  roles.forEach((role) => {
+    if (role.role === currentRole) {
+      permissons = role.permissions;
+    }
+  });
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setCurrentTab(newValue);
   };
 
@@ -41,12 +53,7 @@ const ProjectOverview = () => {
 
   return (
     <>
-      <Grid
-        container
-        columns={1}
-        className={"project-overview-container"}
-        direction="row"
-      >
+      <Grid container columns={1} className={"project-overview-container"} direction="row">
         <Grid container columns={1} className={"nav-tabs-container"}>
           <Grid item xs={1} className={"nav-tabs"}>
             <Tabs value={currentTab} onChange={handleTabChange}>
@@ -57,29 +64,13 @@ const ProjectOverview = () => {
           </Grid>
         </Grid>
         <Grid container columns={12} className={"tab-content-container"}>
-          {currentTab === 0 && (
-            <IssuePanel
-              toggleModal={toggleShowModal}
-              modalStatus={showAddModal}
-            />
-          )}
-          {currentTab === 1 && <TeamPanel />}
-          {currentTab === 2 && <ProjectDetailsPanel />}
+          {currentTab === 0 && <IssuePanel perms={permissons} />}
+          {currentTab === 1 && <TeamPanel perms={permissons} />}
+          {currentTab === 2 && <ProjectDetailsPanel perms={permissons} />}
         </Grid>
       </Grid>
 
-      {
-        <AppDialog
-          variant="AddBug"
-          open={showAddModal}
-          onBackDropClick={() => {
-            toggleShowModal(!showAddModal);
-          }}
-          onClose={() => {
-            toggleShowModal(!showAddModal);
-          }}
-        />
-      }
+      {}
     </>
   );
 };
