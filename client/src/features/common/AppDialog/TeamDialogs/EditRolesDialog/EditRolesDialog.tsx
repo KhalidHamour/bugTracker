@@ -8,20 +8,21 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import TextField from "@mui/material/TextField";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import AppDialog from "./AppDialog";
+import AppDialog from "../../AppDialog";
 
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 
-import { IRole } from "../../../Interfaces";
+import { IRole } from "../../../../../Interfaces";
 
 import { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { RootState } from "../../../app/store";
-import { addRole } from "../../../pages/ProjectOverviewPage/projectOverviewActions";
+import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
+import { RootState } from "../../../../../app/store";
+import { addRole } from "../../../../../pages/ProjectOverviewPage/projectOverviewActions";
 
 interface Iprops {
   close(): any;
+  perms: string[];
 }
 
 const EditRolesDialog = (props: Iprops) => {
@@ -29,13 +30,10 @@ const EditRolesDialog = (props: Iprops) => {
   const [childData, setChildData] = useState<IRole | null>(null);
   const [newRoleName, setNewRoleName] = useState<string>("");
   let dispatch = useAppDispatch();
-  let { team, _id } = useAppSelector(
-    (state: RootState) => state.CurrentProject.value
-  );
+  let { team, _id } = useAppSelector((state: RootState) => state.CurrentProject.value);
 
   const handleChildClose = () => {
     setChildOpen(false);
-    setChildData(null);
   };
 
   const handleCreateNewRole = () => {
@@ -57,14 +55,20 @@ const EditRolesDialog = (props: Iprops) => {
                     return `${perm} `;
                   })}
                 </ListItemText>
-                <ListItemButton
-                  onClick={(e) => {
-                    setChildOpen(!childOpen);
-                    setChildData(role);
-                  }}
-                >
-                  <EditIcon />
-                </ListItemButton>
+                {role.role === "OWNER" || role.role === "UNASSIGNED" ? (
+                  <></>
+                ) : (
+                  <>
+                    <ListItemButton
+                      onClick={(e) => {
+                        setChildOpen(!childOpen);
+                        setChildData(role);
+                      }}
+                    >
+                      <EditIcon />
+                    </ListItemButton>
+                  </>
+                )}
               </ListItem>
             );
           })}
@@ -95,6 +99,7 @@ const EditRolesDialog = (props: Iprops) => {
         onClose={handleChildClose}
         onBackDropClick={handleChildClose}
         data={childData}
+        perms={props.perms}
       />
     </>
   );

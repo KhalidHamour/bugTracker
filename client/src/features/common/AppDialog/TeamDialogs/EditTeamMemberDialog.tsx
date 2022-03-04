@@ -4,28 +4,30 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 
-import { RootState } from "../../../app/store";
+import { RootState } from "../../../../app/store";
 import { useState } from "react";
-import { editTeamMemberRole } from "../../../pages/ProjectOverviewPage/projectOverviewActions";
-import { IMember } from "../../../Interfaces";
-import { Avatar } from "@mui/material";
+import {
+  editTeamMemberRole,
+  removeTeamMember,
+} from "../../../../pages/ProjectOverviewPage/projectOverviewActions";
+import { IMember } from "../../../../Interfaces";
+import { Avatar, TextField } from "@mui/material";
 
 interface Iprops {
   close(): any;
   data: IMember;
+  perms: string[];
 }
 
 const EditTeamMemberDialog = (props: Iprops) => {
   let dispatch = useAppDispatch();
-  let { team } = useAppSelector(
-    (state: RootState) => state.CurrentProject.value
-  );
+  let { _id, team } = useAppSelector((state: RootState) => state.CurrentProject.value);
 
-  const [currentRole, setCurrentRole] = useState<string | null>(
-    props?.data?.role
-  );
+  const [deleteConfirmation, setDeleteConfirmation] = useState<string>("");
+
+  const [currentRole, setCurrentRole] = useState<string | null>(props?.data?.role);
   const [newRoleName, setnewRoleName] = useState<string>("");
 
   const handleSubmit = () => {
@@ -39,15 +41,21 @@ const EditTeamMemberDialog = (props: Iprops) => {
     props.close();
   };
 
+  const handleDelete = () => {
+    let deleteString = `${props.data.name} - REMOVE`;
+    if (deleteString === deleteConfirmation) {
+      dispatch(removeTeamMember({ projectId: _id, userId: props.data._id }));
+      props.close();
+    } else {
+      console.log("delete string error");
+    }
+  };
+
   return (
     <>
       <DialogTitle>{`Edit ${props?.data?.name}'s Role`}</DialogTitle>
       <DialogContent>
-        <Avatar
-          src={props?.data?.imageUrl}
-          alt={props?.data?.name}
-          sx={{ height: 100, width: 100 }}
-        />
+        <Avatar src={props?.data?.imageUrl} alt={props?.data?.name} sx={{ height: 100, width: 100 }} />
         <br></br>
         <DialogContentText>{`currentRole: ${props?.data?.role}`}</DialogContentText>
         <br></br>
@@ -70,6 +78,25 @@ const EditTeamMemberDialog = (props: Iprops) => {
             </Button>
           );
         })}
+        {props.perms.includes("FULL") ||
+        (props.perms.includes("DELETE") && props.perms.includes("EDITTEAM")) ? (
+          <>
+            <DialogContentText>{`Enter "${props.data.name} - REMOVE" to remove`}</DialogContentText>
+            <TextField
+              onChange={(e) => {
+                setDeleteConfirmation(e.currentTarget.value);
+              }}
+            ></TextField>
+            <Button
+              onClick={handleDelete}
+              sx={{ backgroundColor: "red", color: "black", marginLeft: "10px" }}
+            >
+              Delete
+            </Button>
+          </>
+        ) : (
+          <></>
+        )}
       </DialogContent>
       <DialogActions>
         <Button onClick={handleSubmit} variant={"contained"}>

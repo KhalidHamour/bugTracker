@@ -7,12 +7,12 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
 /*Hooks*/
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { useState } from "react";
-import { RootState } from "../../../app/store";
+import { RootState } from "../../../../app/store";
 
 /*Actions*/
-import { addProjectBug } from "../../../pages/ProjectOverviewPage/projectOverviewActions";
+import { addProjectBug } from "../../../../pages/ProjectOverviewPage/projectOverviewActions";
 /*interfaces*/
 
 interface Iprops {
@@ -21,9 +21,7 @@ interface Iprops {
 
 const AddBugDialog = (props: Iprops) => {
   const dispatch = useAppDispatch();
-  const currentProject = useAppSelector(
-    (state: RootState) => state.CurrentProject
-  );
+  const currentProject = useAppSelector((state: RootState) => state.CurrentProject);
   const { _id } = useAppSelector((state: RootState) => state.Auth.profile);
   const [newBugName, setNewBugName] = useState<string>("");
   const [newBugDescription, setNewBugDescription] = useState<string>("");
@@ -33,9 +31,7 @@ const AddBugDialog = (props: Iprops) => {
       description: newBugDescription,
       creatorId: _id,
     };
-    dispatch(
-      addProjectBug({ bug: newBug, projectId: currentProject.value._id })
-    );
+    dispatch(addProjectBug({ bug: newBug, projectId: currentProject.value._id }));
     setNewBugName("");
     setNewBugDescription("");
     props.close();

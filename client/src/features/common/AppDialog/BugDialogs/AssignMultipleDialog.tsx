@@ -4,12 +4,12 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 
-import { RootState } from "../../../app/store";
+import { RootState } from "../../../../app/store";
 import { useState } from "react";
-import { assignBug } from "../../../pages/ProjectOverviewPage/projectOverviewActions";
-import { IBug } from "../../../Interfaces";
+import { assignBug } from "../../../../pages/ProjectOverviewPage/projectOverviewActions";
+import { IBug } from "../../../../Interfaces";
 
 interface Iprops {
   close(): any;
@@ -18,13 +18,9 @@ interface Iprops {
 
 const AssignMultipleDialog = (props: Iprops) => {
   let dispatch = useAppDispatch();
-  let { team } = useAppSelector(
-    (state: RootState) => state.CurrentProject.value
-  );
+  let { team } = useAppSelector((state: RootState) => state.CurrentProject.value);
 
-  const [assignTo, setAssignTo] = useState<string[]>(
-    props.data.assignedTo
-  );
+  const [assignTo, setAssignTo] = useState<string[]>(props.data.assignedTo);
 
   const addAssignment = (memberId: string) => {
     setAssignTo([...assignTo, memberId]);
@@ -44,9 +40,10 @@ const AssignMultipleDialog = (props: Iprops) => {
       <DialogTitle>Assign Multiple</DialogTitle>
       <DialogContent>
         <DialogContentText>{"select bug assignment"}</DialogContentText>
-        {team.members.map((member) => {
+        {team.members.map((member, count = 0) => {
           return assignTo.includes(member._id) ? (
             <Button
+              key={`team-member-${count++}`}
               variant="outlined"
               onClick={() => {
                 removeAssignment(member._id);
@@ -56,6 +53,7 @@ const AssignMultipleDialog = (props: Iprops) => {
             </Button>
           ) : (
             <Button
+              key={`team-member-${count++}`}
               variant="contained"
               onClick={() => {
                 addAssignment(member._id);
