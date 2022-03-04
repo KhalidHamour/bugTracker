@@ -1,6 +1,8 @@
 import teamModel from "../models/teamModel.js";
 import userModel from "../models/userModel.js";
+import bugModel from "../models/bugModel.js";
 import { getTeam } from "../helper/team.js";
+import { getIssues } from "../helper/issues.js";
 
 export const addTeamMember = async (req, res) => {
   const { email, id } = req.body;
@@ -9,23 +11,17 @@ export const addTeamMember = async (req, res) => {
     const existingUser = await userModel.findOne({ email: email });
     const team = await teamModel.findOne({ projectId: id });
     const existingTeamMember = await teamModel.find({
+      projectId: id,
       "members.memberId": existingUser._id,
     });
 
-    if (!existingUser)
-      return res.status(400).json({ message: "user does not exist" });
+    if (!existingUser) return res.status(400).json({ message: "user does not exist" });
 
     if (!team) return res.status(400).json({ message: "team not found" });
 
-    if (existingTeamMember[0])
-      return res
-        .status(400)
-        .json({ message: "user already a team member" });
+    if (existingTeamMember[0]) return res.status(400).json({ message: "user already a team member" });
 
-    team.members = [
-      ...team.members,
-      { memberId: existingUser._id, role: "UNASSIGNED" },
-    ];
+    team.members = [...team.members, { memberId: existingUser._id, role: "UNASSIGNED" }];
 
     existingUser.projects = [...existingUser.projects, id];
 
@@ -70,11 +66,44 @@ export const editTeamMemberRole = async (req, res) => {
 };
 
 export const removeTeamMember = async (req, res) => {
-  const { userId, projectId } = req.body;
+  const { userId, projectId } = req.body.data;
 
   try {
+    const existingUser = await userModel.findById(userId);
+    const team = await teamModel.findOne({ projectId: projectId });
+    let userIssues = await bugModel.find({ _id: { $in: existingUser.AssignedIssues } });
+
+    let userProjectIssues = userIssues.filter((issue) => issue.projectId.toString() === projectId);
+
+    let issueIds = [];
+
+    for (const issue of userProjectIssues) {
+      let newAssignment = issue.assignedTo.filter((user) => user.toString() !== userId);
+      if (newAssignment.length < 1) {
+        issue.status = "Open";
+        issue.assignedTo = newAssignment;
+        await issue.save();
+      } else {
+        issue.assignedTo = newAssignment;
+        await issue.save();
+      }
+      issueIds.push(issue._id);
+    }
+
+    let newAssignedIssues = existingUser.AssignedIssues.filter((issue) => issueIds.includes(issue));
+    existingUser.AssignedIssues = newAssignedIssues;
+    await existingUser.save();
+
+    let newTeam = team.members.filter((member) => member.memberId.toString() !== userId);
+    team.members = newTeam;
+    await team.save();
+
+    const teamRet = await getTeam(team._id);
+    const issueRet = await getIssues(team.projectId);
+
+    return res.status(200).json({ team: teamRet, issues: issueRet });
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    res.status(400).json({ message: error.message });
   }
 };
 
@@ -107,21 +136,41 @@ export const editTeamRole = async (req, res) => {
         return teamRole;
       }
     });
-
     team.roles = newRoles;
     await team.save();
 
-    return res.status(200).json(team.roles);
+    let teamRet = await getTeam(team._id);
+
+    return res.status(200).json({ team: teamRet });
   } catch (error) {
     return res.status(404).json({ error });
   }
 };
-export const removeTeamRole = async (req, res) => {
+export const deleteTeamRole = async (req, res) => {
   const { projectId, roleId } = req.body.data;
 
   try {
     const team = await teamModel.findOne({ projectId: projectId });
+    let roleToDelete = team.roles.filter((role) => role._id.toString() === roleId);
+
+    let newMembers = team.members.map((member) => {
+      if (member.role === roleToDelete[0].role) {
+        member.role = "UNASSINGED";
+        return member;
+      } else {
+        return member;
+      }
+    });
+    let newRoles = team.roles.filter((role) => role._id.toString() !== roleId);
+
+    team.roles = newRoles;
+    team.members = newMembers;
+    await team.save();
+
+    let teamRet = await getTeam(team._id);
+
+    return res.status(200).json({ team: teamRet });
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    return res.status(400).json({ message: error.message });
   }
 };
