@@ -9,7 +9,7 @@ export const getProjectBugs = async (req, res) => {
 
     res.status(200).json({ issues });
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    res.status(400).json({ message: error.message });
   }
 };
 
@@ -27,7 +27,7 @@ export const createProjectBug = async (req, res) => {
 
     res.status(201).json({ newBug });
   } catch (error) {
-    res.status(409).json({ message: error.message });
+    res.status(400).json({ message: error.message });
   }
 };
 
@@ -61,16 +61,14 @@ export const updateBug = async (req, res) => {
 
     updatedBug.title ? (bug.title = updatedBug.title) : undefined;
     updatedBug.status ? (bug.status = updatedBug.status) : undefined;
-    updatedBug.description
-      ? (bug.description = updatedBug.description)
-      : undefined;
-    updatedBug.assignedTo
-      ? (bug.assignedTo = [...bug.assignedTo, updatedBug.assignedTo])
-      : undefined;
+    updatedBug.description ? (bug.description = updatedBug.description) : undefined;
+    updatedBug.assignedTo ? (bug.assignedTo = [...updatedBug.assignedTo]) : undefined;
     await bug.save();
 
-    res.status(200).json({ bug });
-  } catch (error) {}
+    return res.status(200).json({ bug });
+  } catch (error) {
+    return res.status(400).json({ error });
+  }
 };
 
 export const deleteBug = async (req, res) => {
@@ -93,6 +91,6 @@ export const deleteBug = async (req, res) => {
 
     return res.status(201).json({ id: _id });
   } catch (error) {
-    return res.status(409).json({ message: error.message });
+    return res.status(400).json({ error });
   }
 };
