@@ -5,19 +5,22 @@ import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
 import TeamListLitem from "./TeamListLitem";
 import AppDialog from "../../../../features/common/AppDialog/AppDialog";
+import { IconButton } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 
 import { useAppSelector } from "../../../../app/hooks";
 import { RootState } from "../../../../app/store";
 import { useState } from "react";
 import { IMember } from "../../../../Interfaces/IMember";
+interface IProps {
+  perms: string[];
+}
 
-const TeamPanel = () => {
+const TeamPanel = (props: IProps) => {
   const [showAddModal, toggleShowAddModal] = useState<boolean>(false);
   const [showEditModal, toggleShowEditModal] = useState<boolean>(false);
   const [editModalData, setEditModalData] = useState<IMember | null>(null);
-  const { team } = useAppSelector(
-    (state: RootState) => state.CurrentProject.value
-  );
+  const { team } = useAppSelector((state: RootState) => state.CurrentProject.value);
 
   const handleAddMemberClick = () => {
     toggleShowAddModal(!showAddModal);
@@ -43,38 +46,38 @@ const TeamPanel = () => {
           </Paper>
           {team.members.map((member: IMember, count: number = 0) => {
             return (
-              <Paper
-                variant="outlined"
-                key={`team-list-member-${count++}`}
-              >
-                <ListItem
-                  alignItems="center"
-                  onClick={() => {
-                    handleEditMemberClick(member);
-                  }}
-                  sx={{ cursor: "pointer" }}
-                >
+              <Paper variant="outlined" key={`team-list-member-${count++}`}>
+                <ListItem alignItems="center">
                   <TeamListLitem
                     imgUrl={member.imageUrl}
                     name={member.name}
                     role={member.role}
                     email={member.email}
                   />
+                  {props.perms.includes("FULL") || props.perms.includes("EDITTEAM") ? (
+                    <IconButton
+                      onClick={() => {
+                        handleEditMemberClick(member);
+                      }}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  ) : (
+                    <></>
+                  )}
                 </ListItem>
               </Paper>
             );
           })}
-          <Paper variant="outlined">
-            <ListItem
-              sx={{ cursor: "pointer" }}
-              onClick={handleAddMemberClick}
-            >
-              <TeamListLitem
-                icon={<AddIcon />}
-                name={"Add a new team member"}
-              />
-            </ListItem>
-          </Paper>
+          {props.perms.includes("FULL") || props.perms.includes("EDITTEAM") ? (
+            <Paper variant="outlined">
+              <ListItem sx={{ cursor: "pointer" }} onClick={handleAddMemberClick}>
+                <TeamListLitem icon={<AddIcon />} name={"Add a new team member"} />
+              </ListItem>
+            </Paper>
+          ) : (
+            <></>
+          )}
         </List>
       </Container>
 
@@ -83,6 +86,7 @@ const TeamPanel = () => {
         variant={"AddTeamMember"}
         onClose={handleClose}
         onBackDropClick={handleClose}
+        perms={props.perms}
       />
       <AppDialog
         open={showEditModal}
@@ -90,6 +94,7 @@ const TeamPanel = () => {
         onClose={handleClose}
         onBackDropClick={handleClose}
         data={editModalData}
+        perms={props.perms}
       />
     </>
   );

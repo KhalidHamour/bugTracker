@@ -6,13 +6,14 @@ import Grid from "@mui/material/Grid";
 interface Iprops {
   entry: IBug;
   variant: string;
+  perms: string[];
 }
 
 const TableColumnEntry = (props: Iprops) => {
   return (
     <>
       <Grid item xs={1}>
-        <BugCard variant={props.variant} details={props.entry} />
+        <BugCard perms={props.perms} variant={props.variant} details={props.entry} />
       </Grid>
     </>
   );

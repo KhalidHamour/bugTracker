@@ -5,14 +5,16 @@ import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 
 import { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { RootState } from "../../../app/store";
-import { IRole } from "../../../Interfaces";
-import { editRole } from "../../../pages/ProjectOverviewPage/projectOverviewActions";
+import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
+import { RootState } from "../../../../../app/store";
+import { IRole } from "../../../../../Interfaces";
+import { editRole, deleteRole } from "../../../../../pages/ProjectOverviewPage/projectOverviewActions";
+import TextField from "@mui/material/TextField";
 
 interface Iprops {
   close(): any;
   data: IRole;
+  perms: string[];
 }
 
 const perms: string[] = [
@@ -22,19 +24,18 @@ const perms: string[] = [
   "REVIEW",
   "ADD",
   "DELETE",
+  "EDITTEAM",
+  "EDITROLES",
   "NONE",
 ];
 
 const EditRoleChildDialog = (props: Iprops) => {
   let dispatch = useAppDispatch();
 
-  const { _id } = useAppSelector(
-    (state: RootState) => state.CurrentProject.value
-  );
+  const { _id } = useAppSelector((state: RootState) => state.CurrentProject.value);
+  const [rolePerms, setRolePerms] = useState<string[]>(props?.data?.permissions);
 
-  const [rolePerms, setRolePerms] = useState<string[]>(
-    props?.data?.permissions
-  );
+  const [deleteConfirmation, setDeleteConfirmation] = useState<string>("");
 
   const handleAddPerm = (perm: string) => {
     perm === "FULL"
@@ -58,6 +59,16 @@ const EditRoleChildDialog = (props: Iprops) => {
       })
     );
     props.close();
+  };
+
+  const handleDelete = () => {
+    let deleteString = `${props?.data?.role} - DELETE`;
+    if (deleteString === deleteConfirmation) {
+      dispatch(deleteRole({ projectId: _id, roleId: props.data._id }));
+      props.close();
+    } else {
+      console.log("delete string error");
+    }
   };
 
   return (
@@ -88,6 +99,25 @@ const EditRoleChildDialog = (props: Iprops) => {
             </Button>
           );
         })}
+        {props.perms.includes("FULL") ||
+        (props.perms.includes("DELETE") && props.perms.includes("EDITTOLES")) ? (
+          <>
+            <DialogContentText>{`Enter "${props?.data?.role} - DELETE" to delete`}</DialogContentText>
+            <TextField
+              onChange={(e) => {
+                setDeleteConfirmation(e.currentTarget.value);
+              }}
+            ></TextField>
+            <Button
+              onClick={handleDelete}
+              sx={{ backgroundColor: "red", color: "black", marginLeft: "10px" }}
+            >
+              Delete
+            </Button>
+          </>
+        ) : (
+          <></>
+        )}
       </DialogContent>
       <DialogActions>
         <Button onClick={props.close}>Cancel</Button>

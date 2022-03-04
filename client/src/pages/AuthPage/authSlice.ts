@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IProject, IUser } from "../../Interfaces";
-import { addProject } from "../ProjectsPage/projectPageActions";
+import { addProject, deleteProject } from "../ProjectsPage/projectPageActions";
 import { loginWithGoogle, logout } from "./authSliceActions";
 
 export const blankProfile = {
@@ -23,9 +23,7 @@ export type state = {
 
 const localprofile = localStorage.getItem("profile");
 
-export const initialState: state = localprofile
-  ? JSON.parse(localprofile)
-  : { ...blankProfile, status: "" };
+export const initialState: state = localprofile ? JSON.parse(localprofile) : { ...blankProfile, status: "" };
 
 export const AuthSlice = createSlice({
   name: "user",
@@ -45,16 +43,14 @@ export const AuthSlice = createSlice({
     });
 
     //appends added project to state and updates localstorage profile
-    builder.addCase(
-      addProject.fulfilled,
-      (state: state, action: PayloadAction<IProject>) => {
-        state.profile.projects.push(action.payload._id);
-        localStorage.setItem(
-          "profile",
-          JSON.stringify({ profile: state.profile, token: state.token })
-        );
-      }
-    );
+    builder.addCase(addProject.fulfilled, (state: state, action: PayloadAction<IProject>) => {
+      state.profile.projects.push(action.payload._id);
+      localStorage.setItem("profile", JSON.stringify({ profile: state.profile, token: state.token }));
+    });
+    builder.addCase(deleteProject.fulfilled, (state: state, action: PayloadAction<{ id: string }>) => {
+      state.profile.projects = state.profile.projects.filter((project) => project !== action.payload.id);
+      localStorage.setItem("profile", JSON.stringify({ profile: state.profile, token: state.token }));
+    });
   },
 });
 

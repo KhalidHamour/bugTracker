@@ -1,5 +1,4 @@
 import axios from "axios";
-import { IBug } from "../Interfaces/index";
 
 const url = "http://localhost:8000/projects";
 
@@ -10,6 +9,7 @@ const fetchProjects = () =>
     method: "get",
     url: `${url}`,
   });
+
 const fetchUserProjects = (ids: string[]) =>
   axios({
     method: "post",
@@ -24,31 +24,20 @@ const fetchFullProject = (id: string) =>
     data: { id: id },
   });
 
-const createNewProject = (data: {
-  projectName: string;
-  creatorId: string;
-}) =>
+const createNewProject = (data: { projectName: string; creatorId: string }) =>
   axios({
     method: "post",
     url: `${url}/createProject`,
     data: data,
   });
 
-const update = (
-  id: string,
-  name?: string,
-  team?: any[],
-  issues?: IBug[]
-) =>
+const update = (data: { projectId: string; name: string }) =>
   axios({
     method: "put",
-    url: `${url}/${id}`,
-    data: {
-      name: name,
-      team: team,
-      issues: issues,
-    },
+    url: `${url}/updateProject`,
+    data: data,
   });
+
 const remove = (id: string) =>
   axios({
     method: "delete",

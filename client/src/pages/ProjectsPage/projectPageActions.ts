@@ -1,5 +1,5 @@
-import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { IBug, IProject } from "../../Interfaces";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import { IProject } from "../../Interfaces";
 import projectServices from "../../api/projectServices";
 
 export type state = { status: string; value: IProject[] };
@@ -16,16 +16,15 @@ export const setStatusFailed = (state: state) => {
   state.status = "falied";
 };
 
-export const getUserProjects = createAsyncThunk(
-  "projects/getProjects",
-  async (ids: string[], thunkAPI) => {
-    try {
-      const response = await projectServices.fetchUserProjects(ids);
+export const getUserProjects = createAsyncThunk("projects/getProjects", async (ids: string[], thunkAPI) => {
+  try {
+    const response = await projectServices.fetchUserProjects(ids);
 
-      return response.data;
-    } catch (error) {}
+    return response.data;
+  } catch (error) {
+    console.log(error);
   }
-);
+});
 
 export const addProject = createAsyncThunk(
   "projects/addProject",
@@ -33,34 +32,29 @@ export const addProject = createAsyncThunk(
     try {
       const response = await projectServices.createNewProject(data);
       return response.data;
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
 );
 
-export const deleteProject = createAsyncThunk(
-  "projects/deleteProject",
-  async (id: string, thunkAPI) => {
-    try {
-      const response = await projectServices.remove(id);
-      return response.data;
-    } catch (error) {}
+export const deleteProject = createAsyncThunk("projects/deleteProject", async (id: string, thunkAPI) => {
+  try {
+    const response = await projectServices.remove(id);
+    return response.data;
+  } catch (error) {
+    console.log(error);
   }
-);
+});
 
 export const updateProject = createAsyncThunk(
   "projects/updateProject",
-  async (
-    project: { id: string; name?: string; team?: any[]; issues?: IBug[] },
-    thunkAPI
-  ) => {
+  async (data: { projectId: string; name: string }, thunkAPI) => {
     try {
-      const response = await projectServices.update(
-        project.id,
-        project.name,
-        project.team,
-        project.issues
-      );
+      const response = await projectServices.update(data);
       return response.data;
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
 );

@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import EditIcon from "@mui/icons-material/Edit";
 
 /*hooks*/
 import { useNavigate } from "react-router-dom";
@@ -21,31 +21,37 @@ import { setCurrentProject } from "../ProjectOverviewPage/projectOverviewActions
 import "./projectpage.css";
 import { IProject } from "../../Interfaces";
 import AppDialog from "../../features/common/AppDialog/AppDialog";
-import AppMenu from "../../features/common/Menu/AppMenu";
 
 const ProjectsPage = () => {
-  const [showAddModal, toggleShowModal] = useState<boolean>(false);
-  const [showMenu, toggleShowMenu] = useState<boolean>(false);
-  const [anchor, setAnchor] = useState<null | HTMLElement>(null);
-  const [menuProjectID, setMenuProjectID] = useState<string>("");
-  const projects = useAppSelector(
-    (state: RootState) => state.Projects.value
-  );
+  const [showAddModal, toggleShowAddModal] = useState<boolean>(false);
+  const [showEditModal, toggleShowEditModal] = useState<boolean>(false);
+  const [modalProject, setModalProject] = useState<IProject | null>(null);
+  const projects = useAppSelector((state: RootState) => state.Projects.value);
   const profile = useAppSelector((state: RootState) => state.Auth.profile);
+  const { members, roles } = useAppSelector((state: RootState) => state.CurrentProject.value.team);
 
   const dispatch = useAppDispatch();
   let navigate = useNavigate();
 
+  let currentRole: string = "";
+  let permissons: string[] = [];
+  members.forEach((member) => {
+    if (member._id === profile._id) {
+      currentRole = member.role;
+    }
+  });
+  roles.forEach((role) => {
+    if (role.role === currentRole) {
+      permissons = role.permissions;
+    }
+  });
+
   const handleClose = () => {
-    setAnchor(null);
-    setMenuProjectID("");
-    toggleShowMenu(!showMenu);
+    toggleShowAddModal(false);
+    toggleShowEditModal(false);
   };
 
-  const handleTabClick = (
-    e: MouseEvent<HTMLDivElement>,
-    project: IProject
-  ) => {
+  const handleTabClick = (e: MouseEvent<HTMLDivElement>, project: IProject) => {
     if (e.currentTarget === e.target) {
       navigate(`/${profile.name}/projects/${project.name}/${project._id}`);
       dispatch(setCurrentProject(project._id));
@@ -59,17 +65,12 @@ const ProjectsPage = () => {
 
   return (
     <>
-      <Grid
-        container
-        columns={12}
-        spacing={0}
-        className={"project-tabs-container"}
-      >
+      <Grid container columns={12} spacing={0} className={"project-tabs-container"}>
         <Grid item xs={12} className={"button-wrapper"}>
           <Button
             variant="contained"
             onClick={() => {
-              toggleShowModal(!showAddModal);
+              toggleShowAddModal(!showAddModal);
             }}
           >
             Add Project
@@ -106,16 +107,18 @@ const ProjectsPage = () => {
                     <Typography variant="h4" className={"tab-title"}>
                       {project.name}
                     </Typography>
-                    <IconButton
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setAnchor(e.currentTarget);
-                        toggleShowMenu(!showMenu);
-                        setMenuProjectID(project._id);
-                      }}
-                    >
-                      <MoreVertIcon />
-                    </IconButton>
+                    {project.creator === profile._id && (
+                      <>
+                        <IconButton
+                          onClick={(e) => {
+                            toggleShowEditModal(!showEditModal);
+                            setModalProject(project);
+                          }}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      </>
+                    )}
                   </div>
 
                   <br></br>
@@ -126,26 +129,24 @@ const ProjectsPage = () => {
               </Grid>
             );
           })}
-
-        <AppMenu
-          variant="ProjectsPage"
-          open={showMenu}
-          anchor={anchor}
-          onClose={handleClose}
-          data={menuProjectID}
-        />
       </Grid>
 
       <AppDialog
         variant="AddProject"
         open={showAddModal}
-        onBackDropClick={() => {
-          toggleShowModal(!showAddModal);
-        }}
-        onClose={() => {
-          toggleShowModal(!showAddModal);
-        }}
-      ></AppDialog>
+        onBackDropClick={handleClose}
+        onClose={handleClose}
+        perms={[]}
+      />
+
+      <AppDialog
+        variant="EditProject"
+        open={showEditModal}
+        onBackDropClick={handleClose}
+        onClose={handleClose}
+        data={modalProject}
+        perms={permissons}
+      />
     </>
   );
 };
