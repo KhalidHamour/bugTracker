@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { IUserIssues } from "../../Interfaces";
 import { fetchUserAssignedIssues, state, initialState } from "./homeSliceActions";
 
 export const homeSlice = createSlice({
@@ -12,10 +13,13 @@ export const homeSlice = createSlice({
     builder.addCase(fetchUserAssignedIssues.rejected, (state: state) => {
       state.status = "failed";
     });
-    builder.addCase(fetchUserAssignedIssues.fulfilled, (state: state, action) => {
-      state.status = "success";
-      state.issues = action.payload.userBugs;
-    });
+    builder.addCase(
+      fetchUserAssignedIssues.fulfilled,
+      (state: state, action: PayloadAction<{ userBugs: IUserIssues[] }>) => {
+        state.status = "success";
+        state.userIssues = action.payload.userBugs;
+      }
+    );
   },
 });
 

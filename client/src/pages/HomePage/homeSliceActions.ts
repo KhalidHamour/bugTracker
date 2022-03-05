@@ -1,14 +1,14 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import bugServices from "../../api/bugServices";
-import { IBug } from "../../Interfaces";
+import { IUserIssues } from "../../Interfaces";
 
 export type state = {
-  issues: IBug[];
+  userIssues: IUserIssues[];
   status: string;
 };
 
 export const initialState: state = {
-  issues: [],
+  userIssues: [],
   status: "",
 };
 

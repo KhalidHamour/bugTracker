@@ -1,14 +1,18 @@
-import Grid from "@mui/material/Grid";
 import { useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { RootState } from "../../app/store";
 import { fetchUserAssignedIssues } from "./homeSliceActions";
 
+import Grid from "@mui/material/Grid";
+import HomePageSection from "./HomePageSection";
+
+import "./homePage.css";
+
 const HomePage = () => {
   let dispatch = useAppDispatch();
   const { projects, _id } = useAppSelector((state: RootState) => state.Auth.profile);
-  const { issues, status } = useAppSelector((state: RootState) => state.Home);
-
+  const { userIssues } = useAppSelector((state: RootState) => state.Home);
+  let count: number = 0;
   useEffect(() => {
     dispatch(fetchUserAssignedIssues({ projectIds: projects, userId: _id }));
   }, [dispatch, projects, _id]);
@@ -16,8 +20,15 @@ const HomePage = () => {
   return (
     <>
       <Grid item xs={12} className={"home-page-container"}>
-        {issues.map((issue) => {
-          return <></>;
+        {userIssues.map((project) => {
+          return (
+            <HomePageSection
+              key={`homeSection-${count++}`}
+              variant={count === 0 ? "TOP" : count < userIssues.length - 1 ? "MIDDLE" : "BOTTOM"}
+              project={project.project}
+              issues={project.issues}
+            />
+          );
         })}
       </Grid>
     </>
