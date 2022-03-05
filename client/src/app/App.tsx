@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { StyledEngineProvider } from "@mui/material/styles";
 
 import "./App.css";
+import HomePage from "../pages/HomePage/HomePage";
 
 function App() {
   return (
@@ -16,7 +17,14 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<Auth />} />
-            <Route path="/:user" element={<Layout></Layout>} />
+            <Route
+              path="/:user"
+              element={
+                <Layout>
+                  <HomePage />
+                </Layout>
+              }
+            />
             <Route
               path="/:user/projects"
               element={

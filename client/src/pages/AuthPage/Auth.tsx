@@ -13,33 +13,18 @@ import { loginWithGoogle } from "./authSliceActions";
 import { useNavigate } from "react-router-dom";
 
 /*component, response type*/
-import {
-  GoogleLogin,
-  GoogleLoginResponse,
-  GoogleLoginResponseOffline,
-} from "react-google-login";
+import { GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline } from "react-google-login";
 import { RootState } from "../../app/store";
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { _id, name } = useAppSelector(
-    (state: RootState) => state.Auth.profile
-  );
+  const { _id, name } = useAppSelector((state: RootState) => state.Auth.profile);
 
-  useEffect(() => {
-    if (_id !== "") {
-      navigate(`/${name}`);
-    }
-  }, [navigate, _id, name]);
-
-  const googleSuccess = async (
-    res: GoogleLoginResponse | GoogleLoginResponseOffline
-  ) => {
+  const googleSuccess = async (res: GoogleLoginResponse | GoogleLoginResponseOffline) => {
     if ("profileObj" in res && "tokenId" in res) {
-      const { imageUrl, email, name, givenName, familyName } =
-        res?.profileObj;
+      const { imageUrl, email, name, givenName, familyName } = res?.profileObj;
       const token = res?.tokenId;
 
       try {
@@ -99,9 +84,7 @@ const Auth = () => {
                     onClick={renderProps.onClick}
                     disabled={renderProps.disabled}
                   >
-                    {isSignUp
-                      ? "sign Up with google"
-                      : "login with google"}
+                    {isSignUp ? "sign Up with google" : "login with google"}
                   </Button>
                 )}
                 onSuccess={googleSuccess}
@@ -110,19 +93,14 @@ const Auth = () => {
               />
             </Grid>
           </Grid>
-          <Grid
-            container
-            sx={{ justifyContent: "flex-end", padding: "10px" }}
-          >
+          <Grid container sx={{ justifyContent: "flex-end", padding: "10px" }}>
             <Grid item>
               <Button
                 onClick={() => {
                   setIsSignUp(!isSignUp);
                 }}
               >
-                {isSignUp
-                  ? "Already have an account"
-                  : "sign up with a new account"}
+                {isSignUp ? "Already have an account" : "sign up with a new account"}
               </Button>
             </Grid>
           </Grid>
