@@ -8,9 +8,10 @@ import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import AppDialog from "../../AppDialog/AppDialog";
 /*interfaces*/
-import { IBug } from "../../../../Interfaces";
+import { IBug, IProject } from "../../../../Interfaces";
 /*Hooks*/
 import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch } from "../../../../app/hooks";
 import { updateProjectBug } from "../../../../pages/ProjectOverviewPage/projectOverviewActions";
 
@@ -18,11 +19,13 @@ interface IProps {
   details: IBug;
   variant: string;
   perms: string[];
+  project?: IProject;
 }
 
 const BugCard = (props: IProps) => {
+  const navigate = useNavigate();
+  const { user } = useParams();
   const dispatch = useAppDispatch();
-
   const [showEditBugModal, toggleShowEditBugModal] = useState<boolean>(false);
   const [showAssignMultipleDialog, toggleShowAssignMultipleDialog] = useState<boolean>(false);
   const bugID = props.details._id;
@@ -137,6 +140,18 @@ const BugCard = (props: IProps) => {
                   Close
                 </Button>
               )}
+            </>
+          )}
+          {props.variant === "HomePage" && (
+            <>
+              <Button
+                size="small"
+                onClick={() => {
+                  navigate(`/${user}/Projects/${props.project?.name}/${props.project?._id}`);
+                }}
+              >
+                view In Project
+              </Button>
             </>
           )}
         </CardActions>

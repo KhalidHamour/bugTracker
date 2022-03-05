@@ -5,3 +5,4 @@ export * from "./IProject";
 export * from "./IRole";
 export * from "./ITeam";
 export * from "./IUser";
+export * from "./IUserIssues";

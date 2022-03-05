@@ -22,6 +22,8 @@ const Auth = () => {
   const dispatch = useAppDispatch();
   const { _id, name } = useAppSelector((state: RootState) => state.Auth.profile);
 
+  //TODO: create auto login for already logged in user old one was bugged, wouldnt reflect changes made by others on refresh
+
   const googleSuccess = async (res: GoogleLoginResponse | GoogleLoginResponseOffline) => {
     if ("profileObj" in res && "tokenId" in res) {
       const { imageUrl, email, name, givenName, familyName } = res?.profileObj;
