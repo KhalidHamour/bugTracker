@@ -9,11 +9,11 @@ import { logo, items, logout } from "./NavItems";
 
 /*data and routing*/
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { RootState } from "../../app/store";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { RootState } from "../../../app/store";
 
-import { setCurrentPage } from "../Layout/LayoutSilce";
-import { authActions } from "../../pages/AuthPage/authSlice";
+import { setCurrentPage } from "../LayoutSilce";
+import { authActions } from "../../../pages/AuthPage/authSlice";
 
 const Nav = () => {
   const dispatch = useAppDispatch();
@@ -31,18 +31,12 @@ const Nav = () => {
       navigate("/");
     } else {
       dispatch(setCurrentPage(`${text}`));
-      text === "Home"
-        ? navigate(`/${profile.name}`)
-        : navigate(`/${profile.name}/${text}`);
+      text === "Home" ? navigate(`/${profile.name}`) : navigate(`/${profile.name}/${text}`);
     }
   };
 
   return (
-    <StyledDrawer
-      variant="permanent"
-      anchor="left"
-      sx={{ width: { md: "200px", xs: "min-content" } }}
-    >
+    <StyledDrawer variant="permanent" anchor="left" sx={{ width: { md: "200px", xs: "min-content" } }}>
       <div className="drawerTop">
         <List>
           <NavListItem
@@ -70,11 +64,7 @@ const Nav = () => {
       {profile ? (
         <div className="drawerBottom">
           <List>
-            <NavListItem
-              icon={logout.icon}
-              text={logout.text}
-              onClick={OnLogoutClick}
-            />
+            <NavListItem icon={logout.icon} text={logout.text} onClick={OnLogoutClick} />
             <Divider key={`divider2`} />
             <NavListItem
               avatar={{ src: profile.imageUrl, alt: profile.name }}

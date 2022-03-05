@@ -13,6 +13,20 @@ export const getProjectBugs = async (req, res) => {
   }
 };
 
+export const getUserBugs = async (req, res) => {
+  const { projectIds, userId } = req.body.data;
+
+  try {
+    const bugsFromProjects = await bugModel.find({ projectId: { $in: projectIds } });
+
+    const userBugs = bugsFromProjects.filter((bug) => bug.assignedTo.includes(userId));
+
+    return res.status(200).json({ userBugs });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
 export const createProjectBug = async (req, res) => {
   let { bug, projectId } = req.body;
 
@@ -35,13 +49,6 @@ export const assignBug = async (req, res) => {
   let { userIds, bugId } = req.body;
   try {
     let bug = await bugModel.findById(bugId);
-
-    let users = await userModel.find({ _id: { $in: userIds } });
-
-    for (const user of users) {
-      user.AssignedIssues = [...user.AssignedIssues, bugId];
-      await user.save();
-    }
 
     bug.status = "Assigned";
     bug.assignedTo = [...bug.assignedTo, userIds];
@@ -76,12 +83,6 @@ export const deleteBug = async (req, res) => {
 
   try {
     let bug = await bugModel.findById(_id);
-
-    for (const userId of bug.assignedTo) {
-      await userModel.findByIdAndUpdate(userId, {
-        $pull: { AssignedIssues: _id },
-      });
-    }
 
     await projectModel.findByIdAndUpdate(bug.projectId, {
       $pull: { issues: _id },

@@ -3,10 +3,15 @@ import axios from "axios";
 const url = "http://localhost:8000/bugs";
 
 /*Bug API Endpoints*/
-const create = (
-  bug: { title: string; description: string; creatorId: string },
-  projectId: string
-) =>
+
+const fetchUserBugs = (data: { projectIds: string[]; userId: string }) =>
+  axios({
+    method: "post",
+    url: `${url}/fetchUserBugs`,
+    data: { data },
+  });
+
+const create = (bug: { title: string; description: string; creatorId: string }, projectId: string) =>
   axios({
     method: "post",
     url: `${url}/createProjectBug`,
@@ -43,6 +48,7 @@ const deleteBug = (_id: string) =>
   });
 
 const bugServices = {
+  fetchUserBugs,
   create,
   update,
   assignBug,

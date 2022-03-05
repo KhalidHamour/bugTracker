@@ -1,0 +1,8 @@
+.home-page-container {
+  position: relative;
+  bottom: 0;
+  height: 90%;
+  width: 100%;
+  left: 20px;
+  overflow-y: scroll;
+}

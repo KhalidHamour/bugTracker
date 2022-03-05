@@ -1,4 +1,4 @@
-import Nav from "../Nav/Nav";
+import Nav from "./Nav/Nav";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { useAppSelector } from "../../app/hooks";
@@ -10,12 +10,7 @@ import "./Layout.css";
 const Layout = ({ children }: any) => {
   const title = useAppSelector((state: RootState) => state.Layout.value);
   return (
-    <Container
-      className={"app-container"}
-      component={"div"}
-      disableGutters
-      maxWidth={false}
-    >
+    <Container className={"app-container"} component={"div"} disableGutters maxWidth={false}>
       <Nav />
 
       <Grid container spacing={4} className={"content-container"}>

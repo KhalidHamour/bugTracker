@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 
 interface IProps {
   sectionHeading: string;
-  children: JSX.Element;
+  children?: JSX.Element;
   variant: "TOP" | "BOTTOM" | "MIDDLE";
 }
 
@@ -12,17 +12,13 @@ const Section = (props: IProps) => {
   return (
     <>
       <Grid item xs={12}>
-        {(props.variant === "BOTTOM" || props.variant === "MIDDLE") && (
-          <Divider />
-        )}
+        {(props.variant === "BOTTOM" || props.variant === "MIDDLE") && <Divider variant="middle" />}
         <br></br>
         <Typography variant="h4">{props.sectionHeading}</Typography>
         <br></br>
-        {props.children}
+        {props.children || <></>}
         <br></br>
-        {(props.variant === "TOP" || props.variant === "MIDDLE") && (
-          <Divider />
-        )}
+        {(props.variant === "TOP" || props.variant === "MIDDLE") && <Divider variant="middle" />}
       </Grid>
     </>
   );
