@@ -1,6 +1,5 @@
 import bugModel from "../models/bugModel.js";
 import projectModel from "../models/projectModel.js";
-import userModel from "../models/userModel.js";
 
 export const getProjectBugs = async (req, res) => {
   const { ids } = req.body;
@@ -17,9 +16,14 @@ export const getUserBugs = async (req, res) => {
   const { projectIds, userId } = req.body.data;
 
   try {
-    const bugsFromProjects = await bugModel.find({ projectId: { $in: projectIds } });
+    const userBugs = [];
 
-    const userBugs = bugsFromProjects.filter((bug) => bug.assignedTo.includes(userId));
+    for (const projectId of projectIds) {
+      const project = await projectModel.findOne({ _id: projectId });
+      const bugsFromProject = await bugModel.find({ projectId: projectId });
+      const issues = bugsFromProject.filter((bug) => bug.assignedTo.includes(userId));
+      userBugs.push({ project, issues });
+    }
 
     return res.status(200).json({ userBugs });
   } catch (error) {
