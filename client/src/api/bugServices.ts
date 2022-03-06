@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = "http://localhost:8000/bugs";
+const url = "https://bugtracker-project.herokuapp.com/bugs";
 
 /*Bug API Endpoints*/
 

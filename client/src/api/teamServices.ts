@@ -1,7 +1,7 @@
 import axios from "axios";
 import { IRole } from "../Interfaces";
 
-const url = "http://localhost:8000/teams";
+const url = "https://bugtracker-project.herokuapp.com/teams";
 
 const addProjectTeamMember = (data: { email: string; id: string }) =>
   axios({
@@ -9,11 +9,7 @@ const addProjectTeamMember = (data: { email: string; id: string }) =>
     url: `${url}/addTeamMember`,
     data: data,
   });
-const editTeamMemberRole = (data: {
-  teamId: string;
-  memberId: string;
-  newRoleName: string;
-}) =>
+const editTeamMemberRole = (data: { teamId: string; memberId: string; newRoleName: string }) =>
   axios({
     method: "put",
     url: `${url}/editTeamMemberRole`,

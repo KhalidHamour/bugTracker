@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = "http://localhost:8000/users";
+const url = "https://bugtracker-project.herokuapp.com/users";
 
 const loginGoogleUser = (
   email: string,

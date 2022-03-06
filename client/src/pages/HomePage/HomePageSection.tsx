@@ -1,5 +1,4 @@
 import Grid from "@mui/material/Grid";
-import React from "react";
 import Section from "../../features/common/Section/Section";
 import BugCard from "../../features/common/Table/BugCard/BugCard";
 import { IBug, IProject } from "../../Interfaces";
@@ -16,7 +15,7 @@ const HomePageSection = (props: IProps) => {
       <Grid container spacing={3} className={"home-page-project-container"}>
         {props.issues.map((issue) => {
           return (
-            <Grid key={`homePage-${issue._id}`} item xs={12} sm={3}>
+            <Grid key={`homePage-${issue._id}`} item xs={12} sm={4} md={3}>
               <BugCard details={issue} variant={"HomePage"} perms={[]} project={props.project} />
             </Grid>
           );
