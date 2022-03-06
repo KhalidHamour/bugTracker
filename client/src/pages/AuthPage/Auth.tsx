@@ -7,20 +7,18 @@ import Grid from "@mui/material/Grid";
 import InputField from "../../features/common/Input/Input";
 
 /*Hooks*/
-import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useState } from "react";
+import { useAppDispatch } from "../../app/hooks";
 import { loginWithGoogle } from "./authSliceActions";
 import { useNavigate } from "react-router-dom";
 
 /*component, response type*/
 import { GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline } from "react-google-login";
-import { RootState } from "../../app/store";
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { _id, name } = useAppSelector((state: RootState) => state.Auth.profile);
 
   //TODO: create auto login for already logged in user old one was bugged, wouldnt reflect changes made by others on refresh
 

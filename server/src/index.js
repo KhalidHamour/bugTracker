@@ -25,11 +25,13 @@ app.use("/bugs", bugRoutes);
 app.use("/users", userRoutes);
 app.use("/teams", teamRoutes);
 
+app.get("/", (req, res) => {
+  res.send("welcome to the bugTracker API");
+});
+
 /*connnect DB and start server*/
 connectDB().then(() =>
   app.listen(PORT, () => {
-    ENV === "DEVELOPMENT"
-      ? console.log(`server running on port ${PORT}`)
-      : undefined;
+    ENV === "DEVELOPMENT" ? console.log(`server running on port ${PORT}`) : undefined;
   })
 );
