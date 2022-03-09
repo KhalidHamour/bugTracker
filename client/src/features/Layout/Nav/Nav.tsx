@@ -14,12 +14,15 @@ import { RootState } from "../../../app/store";
 
 import { setCurrentPage } from "../LayoutSilce";
 import { authActions } from "../../../pages/AuthPage/authSlice";
+import { useEffect } from "react";
+import jwtDecode from "jwt-decode";
+import { IToken } from "../../../Interfaces";
 
 const Nav = () => {
   const dispatch = useAppDispatch();
   let navigate = useNavigate();
 
-  const { profile } = useAppSelector((state: RootState) => state.Auth);
+  const { profile, token } = useAppSelector((state: RootState) => state.Auth);
 
   const OnLogoutClick = () => {
     dispatch(authActions.logout());
@@ -34,6 +37,15 @@ const Nav = () => {
       text === "Home" ? navigate(`/${profile.name}`) : navigate(`/${profile.name}/${text}`);
     }
   };
+
+  useEffect(() => {
+    if (token.length > 0) {
+      const { exp } = jwtDecode<IToken>(token);
+      if (exp * 1000 < new Date().getTime()) {
+        OnLogoutClick();
+      }
+    }
+  });
 
   return (
     <StyledDrawer variant="permanent" anchor="left" sx={{ width: { md: "200px", xs: "min-content" } }}>
