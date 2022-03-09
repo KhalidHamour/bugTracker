@@ -6,3 +6,4 @@ export * from "./IRole";
 export * from "./ITeam";
 export * from "./IUser";
 export * from "./IUserIssues";
+export * from "./IToken";
