@@ -1,47 +1,45 @@
-import axios from "axios";
-
-const url = "https://bugtracker-project.herokuapp.com/projects";
+import { API } from "./apiConfig";
 
 /*API Endpoints*/
 
 const fetchProjects = () =>
-  axios({
+  API.request({
     method: "get",
-    url: `${url}`,
+    url: `/projects`,
   });
 
 const fetchUserProjects = (ids: string[]) =>
-  axios({
+  API.request({
     method: "post",
-    url: `${url}/fetchUserProjects`,
+    url: `/projects/fetchUserProjects`,
     data: { ids: ids },
   });
 
 const fetchFullProject = (id: string) =>
-  axios({
+  API.request({
     method: "post",
-    url: `${url}/`,
+    url: `/projects/`,
     data: { id: id },
   });
 
 const createNewProject = (data: { projectName: string; creatorId: string }) =>
-  axios({
+  API.request({
     method: "post",
-    url: `${url}/createProject`,
+    url: `/projects/createProject`,
     data: data,
   });
 
 const update = (data: { projectId: string; name: string }) =>
-  axios({
+  API.request({
     method: "put",
-    url: `${url}/updateProject`,
+    url: `/projects/updateProject`,
     data: data,
   });
 
 const remove = (id: string) =>
-  axios({
+  API.request({
     method: "delete",
-    url: `${url}`,
+    url: `/projects`,
     data: { id: id },
   });
 

@@ -1,46 +1,44 @@
-import axios from "axios";
+import { API } from "./apiConfig";
 import { IRole } from "../Interfaces";
 
-const url = "https://bugtracker-project.herokuapp.com/teams";
-
 const addProjectTeamMember = (data: { email: string; id: string }) =>
-  axios({
+  API.request({
     method: "post",
-    url: `${url}/addTeamMember`,
+    url: `/teams/addTeamMember`,
     data: data,
   });
 const editTeamMemberRole = (data: { teamId: string; memberId: string; newRoleName: string }) =>
-  axios({
+  API.request({
     method: "put",
-    url: `${url}/editTeamMemberRole`,
+    url: `/teams/editTeamMemberRole`,
     data: data,
   });
 
 const removeTeamMember = (data: { userId: string; projectId: string }) =>
-  axios({
+  API.request({
     method: "delete",
-    url: `${url}/removeTeamMember`,
+    url: `/teams/removeTeamMember`,
     data: { data },
   });
 
 const addRole = (data: { roleName: string; projectId: string }) =>
-  axios({
+  API.request({
     method: "post",
-    url: `${url}/addRole`,
+    url: `/teams/addRole`,
     data: { data },
   });
 
 const editRole = (data: { projectId: string; role: IRole }) =>
-  axios({
+  API.request({
     method: "put",
-    url: `${url}/editRole`,
+    url: `/teams/editRole`,
     data: { data },
   });
 
 const deleteRole = (data: { roleId: string; projectId: string }) =>
-  axios({
+  API.request({
     method: "delete",
-    url: `${url}/deleteRole`,
+    url: `/teams/deleteRole`,
     data: { data },
   });
 
