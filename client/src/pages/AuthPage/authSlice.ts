@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IProject, IUser } from "../../Interfaces";
 import { addProject, deleteProject } from "../ProjectsPage/projectPageActions";
-import { loginWithGoogle, logout } from "./authSliceActions";
+import { emailLogin, emailSignUp, loginWithGoogle, logout } from "./authSliceActions";
 
 export const blankProfile = {
   profile: {
@@ -37,6 +37,29 @@ export const AuthSlice = createSlice({
       state.status = "failed";
     });
     builder.addCase(loginWithGoogle.fulfilled, (state: state, action) => {
+      state.status = "fulfilled";
+      state.profile = action.payload.profile;
+      state.token = action.payload.token;
+    });
+
+    builder.addCase(emailLogin.pending, (state: state) => {
+      state.status = "loading";
+    });
+    builder.addCase(emailLogin.rejected, (state: state) => {
+      state.status = "failed";
+    });
+    builder.addCase(emailLogin.fulfilled, (state: state, action) => {
+      state.status = "fulfilled";
+      state.profile = action.payload.profile;
+      state.token = action.payload.token;
+    });
+    builder.addCase(emailSignUp.pending, (state: state) => {
+      state.status = "loading";
+    });
+    builder.addCase(emailSignUp.rejected, (state: state) => {
+      state.status = "failed";
+    });
+    builder.addCase(emailSignUp.fulfilled, (state: state, action) => {
       state.status = "fulfilled";
       state.profile = action.payload.profile;
       state.token = action.payload.token;
