@@ -1,4 +1,5 @@
 import express from "express";
+import { auth } from "../middleware/auth.js";
 
 import {
   getFullProject,
@@ -10,10 +11,10 @@ import {
 
 const router = express.Router();
 
-router.post("/", getFullProject);
-router.post("/fetchUserProjects", getUserProjects);
-router.post("/createProject", createProject);
-router.put("/updateProject", updateProject);
-router.delete("/", deleteProject);
+router.post("/", auth, getFullProject);
+router.post("/fetchUserProjects", auth, getUserProjects);
+router.post("/createProject", auth, createProject);
+router.put("/updateProject", auth, updateProject);
+router.delete("/", auth, deleteProject);
 
 export default router;

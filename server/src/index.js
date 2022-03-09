@@ -9,15 +9,14 @@ import userRoutes from "./routes/users.js";
 import teamRoutes from "./routes/teams.js";
 
 const PORT = process.env.PORT || 8000;
-
 const ENV = process.env.ENVIRONMENT;
 
 const app = express();
 
 /*middleWare*/
+app.use(cors());
 app.use(express.json());
 app.use(express.raw({ extended: false }));
-app.use(cors());
 
 /*routes*/
 app.use("/projects", projectRoutes);
