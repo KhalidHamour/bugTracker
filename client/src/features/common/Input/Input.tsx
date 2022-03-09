@@ -1,6 +1,6 @@
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { IconButton, InputAdornment } from "@mui/material";
 import { VisibilityOff, Visibility } from "@mui/icons-material";
 
@@ -9,6 +9,8 @@ interface Iprops {
   label: String;
   half?: boolean;
   autoFocus?: boolean;
+  onChange: Dispatch<SetStateAction<string>>;
+  value: string;
 }
 
 const InputField = (props: Iprops) => {
@@ -20,16 +22,13 @@ const InputField = (props: Iprops) => {
         variant="filled"
         required
         fullWidth
+        value={props.value}
         autoFocus={props.autoFocus}
         label={props.name}
-        type={
-          isPassword
-            ? showPassword === false
-              ? "password"
-              : "text"
-            : "text"
-        }
-        onChange={() => {}}
+        type={isPassword ? (showPassword === false ? "password" : "text") : "text"}
+        onChange={(e) => {
+          props.onChange(e.target.value);
+        }}
         InputProps={
           props.name === "password"
             ? {
