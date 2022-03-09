@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const userSchema = mongoose.Schema({
+  googleId: {
+    type: String,
+    default: "",
+  },
   name: {
     type: String,
     required: true,

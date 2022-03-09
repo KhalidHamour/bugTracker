@@ -1,6 +1,4 @@
-import axios from "axios";
-
-const url = "https://bugtracker-project.herokuapp.com/users";
+import { API } from "./apiConfig";
 
 const loginGoogleUser = (
   email: string,
@@ -8,26 +6,47 @@ const loginGoogleUser = (
   familyName: string,
   imageUrl: string,
   name: string,
+  googleId: string,
   token: string
 ) =>
-  axios({
+  API.request({
     method: "post",
-    url: `${url}/fetchGoogleUser`,
+    url: `/users/fetchGoogleUser`,
     data: {
       email: email,
       givenName: givenName,
       familyName: familyName,
       imageUrl: imageUrl,
       name: name,
+      _id: googleId,
       token: token,
     },
   });
 
+const emailLogin = (data: { email: string; password: string }) =>
+  API.request({
+    method: "post",
+    url: `/users/emailLogin`,
+    data: { data },
+  });
+
+const emailSignUp = (data: {
+  firstName: string;
+  familyName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}) =>
+  API.request({
+    method: "post",
+    url: `/users/emailSignUp`,
+    data: { data },
+  });
+
 const userServices = {
-  // signUp,
-  // fetchUser,
   loginGoogleUser,
-  // deleteUser,
+  emailLogin,
+  emailSignUp,
 };
 
 export default userServices;

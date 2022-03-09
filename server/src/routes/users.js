@@ -1,12 +1,10 @@
 import express from "express";
-
-import { signIn, signUp, getUsers, signInwithGoogle } from "../controllers/users.js";
+import { emailLogin, emailSignUp, signInwithGoogle } from "../controllers/users.js";
 
 const router = express.Router();
 
-router.get("/fetchUsers", getUsers);
-router.get("/fetchUser", signIn);
-router.post("/", signUp);
+router.post("/emailLogin", emailLogin);
+router.post("/emailSignUp", emailSignUp);
 router.post("/fetchGoogleUser", signInwithGoogle);
 
 export default router;

@@ -1,27 +1,25 @@
-import axios from "axios";
-
-const url = "https://bugtracker-project.herokuapp.com/bugs";
+import { API } from "./apiConfig";
 
 /*Bug API Endpoints*/
 
 const fetchUserBugs = (data: { projectIds: string[]; userId: string }) =>
-  axios({
+  API.request({
     method: "post",
-    url: `${url}/fetchUserBugs`,
+    url: "/bugs/fetchUserBugs",
     data: { data },
   });
 
 const create = (bug: { title: string; description: string; creatorId: string }, projectId: string) =>
-  axios({
+  API.request({
     method: "post",
-    url: `${url}/createProjectBug`,
+    url: `/bugs/createProjectBug`,
     data: { bug, projectId },
   });
 
 const assignBug = (bugId: string, userIds: string[]) =>
-  axios({
+  API.request({
     method: "PUT",
-    url: `${url}/assign`,
+    url: `/bugs/assign`,
     data: { bugId, userIds },
   });
 
@@ -34,16 +32,16 @@ const update = (
     assignedTo?: string[];
   }
 ) =>
-  axios({
+  API.request({
     method: "put",
-    url: `${url}`,
+    url: `/bugs/`,
     data: { _id, updatedBug },
   });
 
 const deleteBug = (_id: string) =>
-  axios({
+  API.request({
     method: "delete",
-    url: `${url}/deleteBug`,
+    url: `/bugs/deleteBug`,
     data: { _id },
   });
 

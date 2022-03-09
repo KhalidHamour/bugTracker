@@ -8,15 +8,18 @@ import InputField from "../../features/common/Input/Input";
 
 /*Hooks*/
 import { useState } from "react";
-import { useAppDispatch } from "../../app/hooks";
-import { loginWithGoogle } from "./authSliceActions";
 import { useNavigate } from "react-router-dom";
-
-/*component, response type*/
+import { useAppDispatch } from "../../app/hooks";
+import { emailLogin, emailSignUp, loginWithGoogle } from "./authSliceActions";
 import { GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline } from "react-google-login";
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [firstName, setFirstName] = useState<string>("");
+  const [familyName, setFamilyName] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -24,13 +27,12 @@ const Auth = () => {
 
   const googleSuccess = async (res: GoogleLoginResponse | GoogleLoginResponseOffline) => {
     if ("profileObj" in res && "tokenId" in res) {
-      const { imageUrl, email, name, givenName, familyName } = res?.profileObj;
+      const { imageUrl, email, name, givenName, familyName, googleId } = res?.profileObj;
       const token = res?.tokenId;
-
       try {
         dispatch(
           loginWithGoogle({
-            profile: { imageUrl, email, name, givenName, familyName },
+            profile: { imageUrl, email, name, givenName, familyName, googleId },
             token,
           })
         );
@@ -47,6 +49,24 @@ const Auth = () => {
     console.log(error);
   };
 
+  const loginWithEmail = async () => {
+    try {
+      let res = await dispatch(emailLogin({ email, password }));
+      navigate(`/${res.payload.profile.name}`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const signUpWithEmail = async () => {
+    try {
+      let res = await dispatch(emailSignUp({ firstName, familyName, email, password, confirmPassword }));
+      navigate(`/${res.payload.profile.name}`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Container sx={{ justifyContent: "center", alignItems: "center" }}>
       <Paper sx={{ justifyContent: "center" }}>
@@ -57,20 +77,37 @@ const Auth = () => {
           <Grid container spacing={3} sx={{ justifyContent: "center" }}>
             {isSignUp ? (
               <>
-                <InputField name="firstName" label="firstName" half />
-                <InputField name="lastName" label="lastName" half />
-                <InputField name="email" label="email" />
-                <InputField name="password" label="password" />
-                <InputField name="password" label="Confirm password" />
+                <InputField
+                  name="firstName"
+                  label="firstName"
+                  half
+                  value={firstName}
+                  onChange={setFirstName}
+                />
+                <InputField
+                  name="lastName"
+                  label="lastName"
+                  half
+                  value={familyName}
+                  onChange={setFamilyName}
+                />
+                <InputField name="email" label="email" value={email} onChange={setEmail} />
+                <InputField name="password" label="password" value={password} onChange={setPassword} />
+                <InputField
+                  name="Confirm password"
+                  label="Confirm password"
+                  value={confirmPassword}
+                  onChange={setConfirmPassword}
+                />
               </>
             ) : (
               <>
-                <InputField name="email" label="email" />
-                <InputField name="password" label="password" />
+                <InputField name="email" label="email" value={email} onChange={setEmail} />
+                <InputField name="password" label="password" value={password} onChange={setPassword} />
               </>
             )}
             <Grid item xs={8}>
-              <Button fullWidth variant="contained">
+              <Button fullWidth variant="contained" onClick={isSignUp ? signUpWithEmail : loginWithEmail}>
                 {isSignUp ? "sign Up" : "login"}
               </Button>
             </Grid>
@@ -84,7 +121,7 @@ const Auth = () => {
                     onClick={renderProps.onClick}
                     disabled={renderProps.disabled}
                   >
-                    {isSignUp ? "sign Up with google" : "login with google"}
+                    {"signUp/login with google"}
                   </Button>
                 )}
                 onSuccess={googleSuccess}

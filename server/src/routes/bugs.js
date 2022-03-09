@@ -1,5 +1,5 @@
 import express from "express";
-
+import { auth } from "../middleware/auth.js";
 import {
   getProjectBugs,
   getUserBugs,
@@ -11,11 +11,11 @@ import {
 
 const router = express.Router();
 
-router.post("/fetchProjectBugs", getProjectBugs);
-router.post("/fetchUserBugs", getUserBugs);
-router.post("/createProjectBug", createProjectBug);
-router.put("/", updateBug);
-router.put("/assign", assignBug);
-router.delete("/deleteBug", deleteBug);
+router.post("/fetchProjectBugs", auth, getProjectBugs);
+router.post("/fetchUserBugs", auth, getUserBugs);
+router.post("/createProjectBug", auth, createProjectBug);
+router.put("/", auth, updateBug);
+router.put("/assign", auth, assignBug);
+router.delete("/deleteBug", auth, deleteBug);
 
 export default router;
